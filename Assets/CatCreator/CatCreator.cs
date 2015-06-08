@@ -58,7 +58,11 @@ public class CatCreator : MonoBehaviour {
 	 * Used for editing the cat's stats
 	 */
 	[SerializeField]
+	private GameObject statTools;
+	[SerializeField]
 	private InputField catNameText;
+	[SerializeField]
+	private Toggle femaleToggle;
 
 	/*
 	 * GameObject and and cached components of the cat that's being edited
@@ -96,6 +100,10 @@ public class CatCreator : MonoBehaviour {
 	void Update () {
 		// STATS UPDATE
 		stats.Name = catNameText.text;
+		if(femaleToggle.isOn)
+			stats.Gender = Gender.FEMALE;
+		else
+			stats.Gender = Gender.MALE;
 
 		// DRAWING UPDATE
 		color = new Color(rSlider.value, gSlider.value, bSlider.value, 1f);
@@ -296,6 +304,13 @@ public class CatCreator : MonoBehaviour {
 
 		return Mathf.FloorToInt(mousePos.y * catSprite.texture.height);
 	}
+
+	public void ShowStatTools() {
+		statTools.transform.localScale = new Vector3(1f, 1f, 1f);
+	}
+	public void HideStatTools() {
+		statTools.transform.localScale = Vector3.zero;
+	}
 	
 	public void SaveCatData() {
 		currentFilename = Globals.CatExportImport.ExportCat(cat, currentFilename);
@@ -332,7 +347,11 @@ public class CatCreator : MonoBehaviour {
 	}
 
 	public void FinalizeCat() {
-		GameObject c = Instantiate(Globals.CatPrefab) as GameObject;
-		c.GetComponent<CatSpriteManager>().SetSprite(cat.GetComponent<SpriteRenderer>().sprite);
+		// Serialize the cat so it can be loaded at game start
+		Globals.CatExportImport.ExportCat(cat, "startingCat");
+		Application.LoadLevel(1);
+
+		//GameObject c = Instantiate(Globals.CatPrefab) as GameObject;
+		//c.GetComponent<CatSpriteManager>().SetSprite(cat.GetComponent<SpriteRenderer>().sprite);
 	}
 }

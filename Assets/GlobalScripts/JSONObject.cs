@@ -15,6 +15,7 @@ using Debug = UnityEngine.Debug;
  * JSONObject class v.1.4.1
  * for use with Unity
  * Copyright Matt Schoen 2010 - 2013
+ * http://wiki.unity3d.com/index.php?title=JSONObject
  */
 
 public class JSONObject {

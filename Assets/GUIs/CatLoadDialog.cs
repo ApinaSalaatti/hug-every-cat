@@ -10,7 +10,17 @@ public class CatLoadDialog : MonoBehaviour {
 	
 	public delegate void CatSelectedListener(string selectedCatFilename, GameObject cat);
 	public delegate void CancelListener();
-	
+
+	public static CatLoadDialog Instance() {
+		if(!instance) {
+			instance = FindObjectOfType<CatLoadDialog>();
+			if(!instance) {
+				Debug.LogError("There's no CatLoadDialog to be found you silly cat turd!");
+			}
+		}
+		return instance;
+	}
+
 	/*
 	 * Used by the instance
 	 */
@@ -35,16 +45,6 @@ public class CatLoadDialog : MonoBehaviour {
 
 	private string selectedCatFilename;
 	private GameObject selectedCat;
-	
-	public static CatLoadDialog Instance() {
-		if(!instance) {
-			instance = FindObjectOfType<CatLoadDialog>();
-			if(!instance) {
-				Debug.LogError("There's no CatLoadDialog to be found you silly cat turd!");
-			}
-		}
-		return instance;
-	}
 	
 	void Start() {
 		okButton.onClick.AddListener(OkPressed);
@@ -99,7 +99,7 @@ public class CatLoadDialog : MonoBehaviour {
 			Text t = b.GetComponentInChildren<Text>();
 			t.text = f;
 
-			GameObject cat = Globals.CatExportImport.ImportCat(f);
+			GameObject cat = Globals.CatExportImport.ImportCat(filename);
 			selectableCats[i] = cat;
 			
 			Button button = b.GetComponent<Button>();

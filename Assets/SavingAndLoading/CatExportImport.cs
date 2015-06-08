@@ -2,9 +2,6 @@
 using System.Collections;
 
 public class CatExportImport : MonoBehaviour {
-	[SerializeField]
-	private GameObject catPrefab;
-
 	private string catSaveFolder = "";
 
 	// Use this for initialization
@@ -67,8 +64,22 @@ public class CatExportImport : MonoBehaviour {
 				break;
 			}
 
+			string gender = "";
+			switch(stats.Gender) {
+			case Gender.MALE:
+				gender = "m";
+				break;
+			case Gender.FEMALE:
+				gender = "f";
+				break;
+			default:
+				gender = "u";
+				break;
+			}
+
 			JSONObject json = new JSONObject(JSONObject.Type.OBJECT);
 			json.AddField("name", stats.Name);
+			json.AddField("gender", gender);
 			json.AddField("bodyType", bt);
 			json.AddField("image", textureString);
 
@@ -86,21 +97,35 @@ public class CatExportImport : MonoBehaviour {
 		else
 			return BodyType.MEDIUM;
 	}
-	
-	public GameObject ImportCat(string pathToFile) {
-		GameObject cat = Instantiate(catPrefab);
 
-		string[] lines = System.IO.File.ReadAllLines(pathToFile);
+	public Gender GetGender(string g) {
+		if(g.Equals("f"))
+			return Gender.FEMALE;
+		else if(g.Equals("m"))
+			return Gender.MALE;
+		else
+			return Gender.UNKNOWN;
+	}
+	
+	public GameObject ImportCat(string filename) {
+		GameObject cat = Instantiate(Globals.CatPrefab);
+
+		string[] lines = System.IO.File.ReadAllLines(catSaveFolder + filename);
 
 		JSONObject json = new JSONObject(lines[0]);
 		string name = json.GetField("name").Print().Replace("\"", "");
 		string btString = json.GetField("bodyType").Print().Replace("\"", "");
+		string genderString = json.GetField("gender").Print().Replace("\"", "");
 		string img = json.GetField("image").Print().Replace("\"", "");
 
 		BodyType bt = GetBodyType(btString);
 		CatStats stats = cat.GetComponent<CatStats>();
 		stats.BodyType = bt;
+
 		stats.Name = name;
+		cat.name = name; // Set the name of the gameobject so it's easier to find in the hierarchy...
+
+		stats.Gender = GetGender(genderString);
 
 		Sprite s = CreateSprite(bt, img);
 		cat.GetComponent<CatSpriteManager>().SetSprite(s);

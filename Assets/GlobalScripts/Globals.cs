@@ -16,8 +16,11 @@ public class Globals : MonoBehaviour {
 	private static string catFolder = "";
 	public static string CatFolder { get { return catFolder; } }
 
-	private static CatExportImport catexportImport;
-	public static CatExportImport CatExportImport { get { return catexportImport; } }
+	private static CatExportImport catExportImport;
+	public static CatExportImport CatExportImport { get { return catExportImport; } }
+
+	private static CatFactory catFactory;
+	public static CatFactory CatFactory { get { return catFactory; } }
 
 	// Use this for initialization
 	void Awake () {
@@ -26,7 +29,8 @@ public class Globals : MonoBehaviour {
 		dataFolder = Application.persistentDataPath + "/";
 		catFolder = dataFolder + "cats/";
 		catImages = GetComponent<CatImages>();
-		catexportImport = GetComponent<CatExportImport>();
+		catExportImport = GetComponent<CatExportImport>();
+		catFactory = GetComponent<CatFactory>();
 	}
 	
 	// Update is called once per frame

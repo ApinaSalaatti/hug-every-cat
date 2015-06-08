@@ -1,23 +1,22 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+public enum Gender { MALE, FEMALE, UNKNOWN }
 public enum BodyType { SKINNY, MEDIUM, FAT }
 
 public class CatStats : MonoBehaviour {
+	// Basic info
 	public string Name {
 		get; set;
 	}
 	public BodyType BodyType {
 		get; set;
 	}
-
-	// Use this for initialization
-	void Start () {
-	
+	public Gender Gender {
+		get; set;
 	}
-	
-	// Update is called once per frame
-	void Update () {
-	
+
+	void Awake() {
+
 	}
 }
