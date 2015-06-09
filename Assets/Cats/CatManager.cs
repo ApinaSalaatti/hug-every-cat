@@ -3,11 +3,16 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class CatManager : MonoBehaviour {
+	private static CatManager instance;
+	public static CatManager Instance { get { return instance; } }
+
 	// A list of all cats currently in play
-	private static List<GameObject> cats;
+	private List<GameObject> cats;
 
 	// Use this for initialization
 	void Awake() {
+		instance = this;
+
 		cats = new List<GameObject>();
 	}
 	
@@ -18,10 +23,10 @@ public class CatManager : MonoBehaviour {
 		}
 	}
 
-	public static void AddCat(GameObject c) {
+	public void AddCat(GameObject c) {
 		cats.Add(c);
 	}
-	public static void RemoveCat(GameObject c) {
+	public void RemoveCat(GameObject c) {
 		cats.Remove(c);
 	}
 }

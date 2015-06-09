@@ -4,16 +4,16 @@ using System.Collections;
 public enum CatNeedType { HUNGER, CLEANLINESS, HAPPINESS, ENERGY, NO_NEED }
 
 public class CatNeeds : MonoBehaviour {
-	public int Hunger {
+	public float Hunger {
 		get; set;
 	}
-	public int Cleanliness {
+	public float Cleanliness {
 		get; set;
 	}
-	public int Happiness {
+	public float Happiness {
 		get; set;
 	}
-	public int Energy {
+	public float Energy {
 		get; set;
 	}
 
@@ -23,7 +23,27 @@ public class CatNeeds : MonoBehaviour {
 	}
 	
 	// Update is called once per frame
-	void CatUpdate () {
+	void CatUpdate (float deltaTime) {
 	
+	}
+
+	public void IncreaseNeed(CatNeedType type, float amount) {
+		switch(type) {
+		case CatNeedType.HUNGER:
+			Hunger += amount;
+			break;
+		case CatNeedType.CLEANLINESS:
+			Cleanliness += amount;
+			break;
+		case CatNeedType.HAPPINESS:
+			Happiness += amount;
+			break;
+		case CatNeedType.ENERGY:
+			Energy += amount;
+			break;
+		}
+	}
+	public void NeedIncreased(NeedIncreasedEffect effect) {
+		IncreaseNeed(effect.type, effect.amount);
 	}
 }

@@ -2,6 +2,18 @@
 using System.Collections;
 
 public class CatFactory : MonoBehaviour {
+	private static CatFactory instance;
+	public static CatFactory Instance {
+		get { return instance; }
+	}
+
+	void Awake() {
+		instance = this;
+	}
+
+	/*
+	 * Actual instance stuff starts here
+	 */
 	private string[] maleNames = new string[] { "Pasi", "Niilo" };
 	private string[] femaleNames = new string[] { "Laila", "Viivi" };
 	
@@ -72,6 +84,6 @@ public class CatFactory : MonoBehaviour {
 	}
 
 	public GameObject CreateFromFile(string filename) {
-		return Globals.CatExportImport.ImportCat(filename);
+		return CatExportImport.Instance.ImportCat(filename);
 	}
 }

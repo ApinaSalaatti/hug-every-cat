@@ -5,8 +5,6 @@ using System.Collections;
 public class CatBodyData {
 	public Sprite emptyCat;
 	public Sprite legalPixels;
-	public Animation idleAnim;
-	public Animation walkAnim;
 }
 
 public class CatImages : MonoBehaviour {

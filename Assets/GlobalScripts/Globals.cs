@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+// A script that contains assets that need global access
 public class Globals : MonoBehaviour {
 	private static CatImages catImages;
 	public static CatImages CatImages { get { return catImages; } }
@@ -16,11 +17,11 @@ public class Globals : MonoBehaviour {
 	private static string catFolder = "";
 	public static string CatFolder { get { return catFolder; } }
 
-	private static CatExportImport catExportImport;
-	public static CatExportImport CatExportImport { get { return catExportImport; } }
+	//private static CatExportImport catExportImport;
+	//public static CatExportImport CatExportImport { get { return catExportImport; } }
 
-	private static CatFactory catFactory;
-	public static CatFactory CatFactory { get { return catFactory; } }
+	//private static CatFactory catFactory;
+	//public static CatFactory CatFactory { get { return catFactory; } }
 
 	// Use this for initialization
 	void Awake () {
@@ -29,8 +30,8 @@ public class Globals : MonoBehaviour {
 		dataFolder = Application.persistentDataPath + "/";
 		catFolder = dataFolder + "cats/";
 		catImages = GetComponent<CatImages>();
-		catExportImport = GetComponent<CatExportImport>();
-		catFactory = GetComponent<CatFactory>();
+		//catExportImport = GetComponent<CatExportImport>();
+		//catFactory = GetComponent<CatFactory>();
 	}
 	
 	// Update is called once per frame

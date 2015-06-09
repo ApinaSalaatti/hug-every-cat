@@ -11,14 +11,12 @@ public class CatLoadDialog : MonoBehaviour {
 	public delegate void CatSelectedListener(string selectedCatFilename, GameObject cat);
 	public delegate void CancelListener();
 
-	public static CatLoadDialog Instance() {
-		if(!instance) {
-			instance = FindObjectOfType<CatLoadDialog>();
-			if(!instance) {
-				Debug.LogError("There's no CatLoadDialog to be found you silly cat turd!");
-			}
-		}
-		return instance;
+	public static CatLoadDialog Instance {
+		get { return instance; }
+	}
+
+	void Awake() {
+		instance = this;
 	}
 
 	/*
@@ -99,7 +97,7 @@ public class CatLoadDialog : MonoBehaviour {
 			Text t = b.GetComponentInChildren<Text>();
 			t.text = f;
 
-			GameObject cat = Globals.CatExportImport.ImportCat(filename);
+			GameObject cat = CatExportImport.Instance.ImportCat(filename);
 			selectableCats[i] = cat;
 			
 			Button button = b.GetComponent<Button>();

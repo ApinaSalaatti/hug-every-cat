@@ -2,6 +2,18 @@
 using System.Collections;
 
 public class CatExportImport : MonoBehaviour {
+	private static CatExportImport instance;
+	public static CatExportImport Instance {
+		get { return instance; }
+	}
+
+	void Awake() {
+		instance = this;
+	}
+
+	/*
+	 * Instance stuff starts here
+	 */
 	private string catSaveFolder = "";
 
 	// Use this for initialization
@@ -113,10 +125,10 @@ public class CatExportImport : MonoBehaviour {
 		string[] lines = System.IO.File.ReadAllLines(catSaveFolder + filename);
 
 		JSONObject json = new JSONObject(lines[0]);
-		string name = json.GetField("name").Print().Replace("\"", "");
-		string btString = json.GetField("bodyType").Print().Replace("\"", "");
-		string genderString = json.GetField("gender").Print().Replace("\"", "");
-		string img = json.GetField("image").Print().Replace("\"", "");
+		string name = json.GetField("name").str;
+		string btString = json.GetField("bodyType").str;
+		string genderString = json.GetField("gender").str;
+		string img = json.GetField("image").str;
 
 		BodyType bt = GetBodyType(btString);
 		CatStats stats = cat.GetComponent<CatStats>();

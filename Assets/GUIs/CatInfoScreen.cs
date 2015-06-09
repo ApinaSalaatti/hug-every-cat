@@ -7,15 +7,10 @@ public class CatInfoScreen : MonoBehaviour {
 	 * Global static stuff
 	 */
 	private static CatInfoScreen instance;
-	
-	public static CatInfoScreen Instance() {
-		if(!instance) {
-			instance = FindObjectOfType<CatInfoScreen>();
-			if(!instance) {
-				Debug.LogError("There's no CatInfoScreen to be found you silly cat turd!");
-			}
-		}
-		return instance;
+	public static CatInfoScreen Instance { get { return instance; } }
+
+	void Awake() {
+		instance = this;
 	}
 
 	/*

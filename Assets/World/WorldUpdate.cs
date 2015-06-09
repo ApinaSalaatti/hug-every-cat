@@ -2,13 +2,13 @@
 using System.Collections;
 
 public class WorldUpdate : MonoBehaviour {
-	private bool paused = false;
-	public bool Paused { get { return paused; } }
+	private static bool paused = false;
+	public static bool Paused { get { return paused; } }
 
-	public void PauseGame() {
+	public static void PauseGame() {
 		paused = true;
 	}
-	public void UnpauseGame() {
+	public static void UnpauseGame() {
 		paused = false;
 	}
 

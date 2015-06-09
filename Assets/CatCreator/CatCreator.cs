@@ -123,6 +123,10 @@ public class CatCreator : MonoBehaviour {
 		}
 	}
 
+	public void RandomizeName() {
+		catNameText.text = CatFactory.Instance.RandomCatName(stats.Gender);
+	}
+
 	// 0 = skinny, 1 = medium, 2 = fat
 	public void SetCatBody(int b) {
 		if(b == 0) {
@@ -313,7 +317,7 @@ public class CatCreator : MonoBehaviour {
 	}
 	
 	public void SaveCatData() {
-		currentFilename = Globals.CatExportImport.ExportCat(cat, currentFilename);
+		currentFilename = CatExportImport.Instance.ExportCat(cat, currentFilename);
 	}
 
 	private void OnCatSave() {
@@ -321,19 +325,19 @@ public class CatCreator : MonoBehaviour {
 	}
 
 	public void LoadCatData() {
-		CatLoadDialog.Instance().catSelectedListeners += OnCatLoad;
-		CatLoadDialog.Instance().cancelListeners += OnLoadCancel;
-		CatLoadDialog.Instance().ShowDialog(Globals.CatFolder);
+		CatLoadDialog.Instance.catSelectedListeners += OnCatLoad;
+		CatLoadDialog.Instance.cancelListeners += OnLoadCancel;
+		CatLoadDialog.Instance.ShowDialog(Globals.CatFolder);
 	}
 
 	private void OnLoadCancel() {
-		CatLoadDialog.Instance().catSelectedListeners -= OnCatLoad;
-		CatLoadDialog.Instance().cancelListeners -= OnLoadCancel;
+		CatLoadDialog.Instance.catSelectedListeners -= OnCatLoad;
+		CatLoadDialog.Instance.cancelListeners -= OnLoadCancel;
 	}
 
 	private void OnCatLoad(string filename, GameObject c) {
-		CatLoadDialog.Instance().catSelectedListeners -= OnCatLoad; // No need to listen anymore
-		CatLoadDialog.Instance().cancelListeners -= OnLoadCancel;
+		CatLoadDialog.Instance.catSelectedListeners -= OnCatLoad; // No need to listen anymore
+		CatLoadDialog.Instance.cancelListeners -= OnLoadCancel;
 
 		currentFilename = filename;
 		catNameText.text = c.GetComponent<CatStats>().Name;
@@ -348,7 +352,7 @@ public class CatCreator : MonoBehaviour {
 
 	public void FinalizeCat() {
 		// Serialize the cat so it can be loaded at game start
-		Globals.CatExportImport.ExportCat(cat, "startingCat");
+		CatExportImport.Instance.ExportCat(cat, "startingCat");
 		Application.LoadLevel(1);
 
 		//GameObject c = Instantiate(Globals.CatPrefab) as GameObject;

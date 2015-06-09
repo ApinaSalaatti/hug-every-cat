@@ -5,9 +5,11 @@ public class WorldInit : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		GameObject c = Globals.CatFactory.CreateFromFile("startingCat");
-		CatManager.AddCat(c);
-		//CatInfoScreen.Instance().Show(c);
+		GameObject c = CatFactory.Instance.CreateFromFile("startingCat");
+		CatManager.Instance.AddCat(c);
+
+		HouseItem food = FindObjectOfType<HouseItem>();
+		HouseItemManager.Instance.AddItem(food.gameObject);
 	}
 	
 	// Update is called once per frame
