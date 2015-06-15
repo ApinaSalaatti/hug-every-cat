@@ -15,14 +15,6 @@ public class CatCreator : MonoBehaviour {
      * Used for drawing tools
 	 */
 	[SerializeField]
-	private Slider rSlider;
-	[SerializeField]
-	private Slider gSlider;
-	[SerializeField]
-	private Slider bSlider;
-	[SerializeField]
-	private Image colorPreview;
-	[SerializeField]
 	private Text currentToolIndicator;
 	// Randomization stuff
 	[SerializeField]
@@ -37,6 +29,11 @@ public class CatCreator : MonoBehaviour {
 	private Image randomColorPreview2;
 	[SerializeField]
 	private Toggle randomColorToggle;
+
+	[SerializeField]
+	private ColorSelector fgSelector;
+	[SerializeField]
+	private ColorSelector bgSelector;
 
 	private FurRandomizationMethod method = FurRandomizationMethod.CELLULAR_AUTOMATA;
 	public FurRandomizationMethod CurrentRandomizationMethod { get { return method; } }
@@ -106,8 +103,7 @@ public class CatCreator : MonoBehaviour {
 			stats.Gender = Gender.MALE;
 
 		// DRAWING UPDATE
-		color = new Color(rSlider.value, gSlider.value, bSlider.value, 1f);
-		colorPreview.color = color;
+		color = fgSelector.Color;
 
 		// RANDOMIZER UPDATE
 		Color col = new Color(randomColor1.rSlider.value, randomColor1.gSlider.value, randomColor1.bSlider.value, 1f);
@@ -176,6 +172,7 @@ public class CatCreator : MonoBehaviour {
 
 		toolQueue.Clear();
 		queueIndex = -1;
+		usingTool = false;
 	}
 	public void CopySpriteData(Sprite s) {
 		Texture2D tex = new Texture2D(s.texture.width, s.texture.height, s.texture.format, false);
@@ -214,14 +211,9 @@ public class CatCreator : MonoBehaviour {
 			toolQueue[queueIndex].RedoExecute();
 		}
 	}
-
+	
 	public void SetColor(float r, float g, float b) {
-		rSlider.value = r;
-		gSlider.value = g;
-		bSlider.value = b;
-	}
-	public void RandomColor() {
-		SetColor(Random.value, Random.value, Random.value);
+		fgSelector.SetColor(r, g, b);
 	}
 
 	public void StartTool() {
@@ -247,8 +239,8 @@ public class CatCreator : MonoBehaviour {
 			break;
 		case DrawTool.RANDOM_FUR:
 			toolQueue.Add(new RandomFurTool(this, CurrentRandomizationMethod, randomColorToggle.isOn,
-				new Color(randomColor1.rSlider.value, randomColor1.gSlider.value, randomColor1.bSlider.value, 1f),
-			    new Color(randomColor2.rSlider.value, randomColor2.gSlider.value, randomColor2.bSlider.value, 1f)
+				fgSelector.Color,
+			    bgSelector.Color
 			));
 			// Because the randomizer is not really a drawing tool, we reset the tool after every usage
 			SetTool(0);
