@@ -353,7 +353,7 @@ public class CatCreator : MonoBehaviour {
 	public void FinalizeCat() {
 		// Serialize the cat so it can be loaded at game start
 		CatExportImport.Instance.ExportCat(cat, "startingCat");
-		Application.LoadLevel(1);
+		Application.LoadLevel(2);
 
 		//GameObject c = Instantiate(Globals.CatPrefab) as GameObject;
 		//c.GetComponent<CatSpriteManager>().SetSprite(cat.GetComponent<SpriteRenderer>().sprite);

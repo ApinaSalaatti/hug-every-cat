@@ -33,7 +33,7 @@ public class CatExportImport : MonoBehaviour {
 
 	private string CreateFilename(string catName) {
 		double unixTimestamp = (System.DateTime.UtcNow.Subtract(new System.DateTime(1970, 1, 1))).TotalSeconds;
-		return catName + ((long)unixTimestamp).ToString() + ".cat";
+		return catName + ((long)unixTimestamp).ToString() + ".catFile";
 	}
 
 	// Returns the filename where the cat was saved

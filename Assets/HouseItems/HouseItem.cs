@@ -18,6 +18,10 @@ public class NeedIncreasedEffect {
  */
 public class HouseItem : MonoBehaviour {
 	[SerializeField]
+	private string itemName;
+	public string ItemName { get { return itemName; } }
+
+	[SerializeField]
 	private CatNeedType[] satisfiedNeeds; // The needs this item satisfies when used, if any
 	[SerializeField]
 	private float[] amountSatisfiedPerSecond;

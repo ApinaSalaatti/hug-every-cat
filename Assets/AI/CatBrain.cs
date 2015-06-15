@@ -29,7 +29,7 @@ public class CatBrain : MonoBehaviour {
 			timer = 0f;
 			moving = !moving;
 			if(moving)
-				mover.SetMovement(Random.value, Random.value);
+				mover.SetMovement(Random.value-0.5f, Random.value-0.5f);
 			else
 				mover.SetMovement(0f, 0f);
 		}

@@ -8,6 +8,8 @@ public class CatMover : MonoBehaviour {
 
 	private Animator animator;
 
+	private bool movingLeft = false;
+
 	public void SetMovement(float x, float y) {
 		movement.x = x;
 		movement.y = y;
@@ -24,10 +26,25 @@ public class CatMover : MonoBehaviour {
 	void Awake() {
 		animator = GetComponent<Animator>();
 	}
+
+	private void FlipSprite() {
+		movingLeft = !movingLeft;
+
+		Vector3 scale = transform.localScale;
+		scale.x *= -1f;
+		transform.localScale = scale;
+	}
 	
 	// Update is called once per frame
 	void CatUpdate(float deltaTime) {
 		if(movement.sqrMagnitude > 0.000001f) {
+			if(movement.x < 0f && !movingLeft) {
+				FlipSprite();
+			}
+			else if(movement.x > 0f && movingLeft) {
+				FlipSprite();
+			}
+
 			animator.SetBool("Moving", true);
 			Vector3 pos = transform.position;
 			pos.x += movement.x * speed * deltaTime;

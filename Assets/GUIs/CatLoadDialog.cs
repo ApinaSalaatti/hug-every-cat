@@ -82,7 +82,7 @@ public class CatLoadDialog : MonoBehaviour {
 		}
 		dialogObject.SetActive(true);
 		
-		string[] files = System.IO.Directory.GetFiles(pathToDirectory);
+		string[] files = System.IO.Directory.GetFiles(pathToDirectory, "*.catFile");
 		catSelectButtons = new Button[files.Length];
 		selectableCats = new GameObject[files.Length];
 		for(int i = 0; i < files.Length; i++) {

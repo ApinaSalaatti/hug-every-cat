@@ -4,6 +4,9 @@ using System.Collections;
 public enum CatNeedType { HUNGER, CLEANLINESS, HAPPINESS, ENERGY, NO_NEED }
 
 public class CatNeeds : MonoBehaviour {
+	// The maximum satisfaction for any need
+	public static float NeedMaximum { get { return 100f; } }
+
 	public float Hunger {
 		get; set;
 	}
