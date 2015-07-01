@@ -19,14 +19,14 @@ public class Globals : MonoBehaviour {
 	private static string dataFolder = "";
 	public static string DataFolder { get { return dataFolder; } }
 
+	private static string saveFolder = "";
+	public static string SaveFolder { get { return saveFolder; } }
+
 	private static string tempDataFolder = "";
 	public static string TempDataFolder { get { return tempDataFolder; } }
 
 	private static string catFolder = "";
 	public static string CatFolder { get { return catFolder; } }
-
-	private static string houseItemFolder = "";
-	public static string HouseItemFolder { get { return houseItemFolder; } }
 
 	// Use this for initialization
 	void Awake () {
@@ -34,9 +34,13 @@ public class Globals : MonoBehaviour {
 		defTexture = defaultTexture;
 
 		dataFolder = Application.persistentDataPath + "/";
+		saveFolder = dataFolder + "save/";
 		tempDataFolder = dataFolder + "temp/";
 		catFolder = dataFolder + "cats/";
-		houseItemFolder = dataFolder + "hItems/";
+
+		System.IO.Directory.CreateDirectory(saveFolder);
+		System.IO.Directory.CreateDirectory(tempDataFolder);
+		System.IO.Directory.CreateDirectory(catFolder);
 
 		catImages = GetComponent<CatImages>();
 		//catExportImport = GetComponent<CatExportImport>();

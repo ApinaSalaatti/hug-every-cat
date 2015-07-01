@@ -19,7 +19,6 @@ public class CatExportImport : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		catSaveFolder = Globals.CatFolder;
-		System.IO.Directory.CreateDirectory(catSaveFolder);
 	}
 	
 	// Update is called once per frame

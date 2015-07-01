@@ -98,6 +98,7 @@ public class CatCreator : MonoBehaviour {
 		color = fgSelector.Color;
 
 		if(usingTool) {
+			Debug.Log(queueIndex);
 			// Pen will execute constantly until pointer button is released
 			if(toolQueue[queueIndex].toolType == DrawTool.PEN) {
 				toolQueue[queueIndex].Execute();
@@ -216,8 +217,10 @@ public class CatCreator : MonoBehaviour {
 			toolQueue.RemoveRange(queueIndex+1, toDiscard);
 		}
 
+		usingTool = false;
 		switch(currentTool) {
 		case DrawTool.PEN:
+			usingTool = true; // Pen is used during multiple frames
 			toolQueue.Add(new PenTool(this, color));
 			break;
 		case DrawTool.BUCKET:
@@ -238,8 +241,6 @@ public class CatCreator : MonoBehaviour {
 
 		// Execute the tool
 		toolQueue[queueIndex].Execute();
-
-		usingTool = true;
 	}
 	public void EndTool() {
 		usingTool = false;

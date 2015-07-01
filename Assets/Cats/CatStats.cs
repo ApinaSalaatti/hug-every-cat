@@ -19,4 +19,14 @@ public class CatStats : MonoBehaviour {
 	void Awake() {
 
 	}
+
+	public void Save(JSONObject json) {
+		json.AddField("name", Name);
+		json.AddField("bodyType", BodyType.ToString());
+		json.AddField("gender", Gender.ToString());
+	}
+
+	public void Load(JSONObject json) {
+
+	}
 }

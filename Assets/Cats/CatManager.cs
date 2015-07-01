@@ -29,4 +29,30 @@ public class CatManager : MonoBehaviour {
 	public void RemoveCat(GameObject c) {
 		cats.Remove(c);
 	}
+
+	public void SaveGame() {
+		JSONObject json = new JSONObject(JSONObject.Type.OBJECT);
+		JSONObject catList = new JSONObject(JSONObject.Type.ARRAY);
+		foreach(GameObject cat in cats) {
+			JSONObject c = new JSONObject(JSONObject.Type.OBJECT);
+
+			JSONObject stats = new JSONObject(JSONObject.Type.OBJECT);
+			cat.GetComponent<CatStats>().Save(stats);
+			c.AddField("stats", stats);
+
+			catList.Add(c);
+		}
+		json.AddField("cats", catList);
+
+		using(System.IO.StreamWriter file = new System.IO.StreamWriter(Globals.SaveFolder + "cats")) {
+			file.WriteLine(json.Print());
+		}
+	}
+	public void LoadGame() {
+		if(GameSaveLoad.Instance.SavePresent) {
+			string[] lines = System.IO.File.ReadAllLines(Globals.SaveFolder + "cats");
+			JSONObject json = new JSONObject(lines[0]);
+			json.GetField("cats");
+		}
+	}
 }

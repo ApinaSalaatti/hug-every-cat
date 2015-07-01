@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public enum ShopItemCategory { ALL, CAT_NEED, CAT_ACCESSORY }
+public enum ShopItemCategory { ALL, FOR_CATS, ACCESSORIES, FOR_HUMANS }
 
 public class ShopItem {
 	public string resourceName;
@@ -35,7 +35,16 @@ public class Shop : MonoBehaviour {
 		it.description = "A basic food bowl for a pet";
 		it.image = null;
 		it.price = 10;
-		it.category = ShopItemCategory.CAT_NEED;
+		it.category = ShopItemCategory.FOR_CATS;
+		AddItem(it);
+
+		it = new ShopItem();
+		it.resourceName = "camera";
+		it.name = "Camera";
+		it.description = "A Catdak 500 precision camera";
+		it.image = null;
+		it.price = 50;
+		it.category = ShopItemCategory.FOR_HUMANS;
 		AddItem(it);
 	}
 
@@ -58,6 +67,19 @@ public class Shop : MonoBehaviour {
 		}
 		else {
 			return itemsByCategory[category];
+		}
+	}
+
+	public ShopItemCategory IntegerToCategory(int i) {
+		switch(i) {
+		case 0:
+			return ShopItemCategory.FOR_CATS;
+		case 1:
+			return ShopItemCategory.ACCESSORIES;
+		case 2:
+			return ShopItemCategory.FOR_HUMANS;
+		default:
+			return ShopItemCategory.ALL;
 		}
 	}
 }

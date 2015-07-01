@@ -35,6 +35,8 @@ public class ShopScreen : MonoBehaviour {
 	}
 
 	public void SetShownItems(ShopItemCategory category) {
+		Clear();
+
 		categoryText.text = category.ToString();
 
 		List<ShopItem> items = Shop.Instance.GetItems(category);
@@ -46,6 +48,10 @@ public class ShopScreen : MonoBehaviour {
 			button.transform.SetParent(shopButtonParent);
 			shopButtons.Add(button);
 		}
+	}
+	// This is mostly used by the editor because it seems you can't add functions with an enum as a parameter to button callbacks
+	public void SetShownItems(int category) {
+		SetShownItems(Shop.Instance.IntegerToCategory(category));
 	}
 
 	public void StartItemPlacement() {
@@ -89,8 +95,7 @@ public class ShopScreen : MonoBehaviour {
 		transform.localScale = new Vector3(1f, 1f, 1f);
 		screenShown = true;
 
-		Clear();
-		SetShownItems(ShopItemCategory.CAT_NEED);
+		SetShownItems(ShopItemCategory.FOR_CATS);
 	}
 	public void Hide() {
 		transform.localScale = Vector3.zero;

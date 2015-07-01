@@ -5,6 +5,7 @@ public class PlayerInputManager : MonoBehaviour {
 	private GameObject beingSelected;
 	private GameObject selected;
 
+	private Vector2 mouseDownPos;
 	private Vector2 lastMousePos;
 	private bool pointerDown = false;
 	private bool dragged = false;
@@ -19,7 +20,7 @@ public class PlayerInputManager : MonoBehaviour {
 		// Check for mouse drag
 		if(pointerDown) {
 			Vector2 currentMousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-			if(Vector2.Distance(currentMousePos, lastMousePos) > 0.01f) {
+			if(Vector2.Distance(currentMousePos, mouseDownPos) > 0.1f) {
 				Vector2 diff = currentMousePos - lastMousePos;
 				dragged = true;
 				if(selected != null && selected == beingSelected) { // We get here when we first select an object, then push the pointer again on top of it and start to drag
@@ -38,7 +39,7 @@ public class PlayerInputManager : MonoBehaviour {
 		}
 
 		if(Input.GetKeyDown(KeyCode.P)) {
-			if(WorldUpdate.Paused)
+			if(!WorldUpdate.Paused)
 				WorldUpdate.PauseGame();
 			else
 				WorldUpdate.UnpauseGame();
@@ -59,8 +60,9 @@ public class PlayerInputManager : MonoBehaviour {
 
 	public void OnPointerDown() {
 		lastMousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+		mouseDownPos = lastMousePos;
 		beingSelected = GetObjectUnderMouse();
-		Debug.Log(beingSelected);
+		//Debug.Log(beingSelected);
 		pointerDown = true;
 
 		// Reset these
@@ -69,7 +71,7 @@ public class PlayerInputManager : MonoBehaviour {
 	public void OnPointerUp() {
 		pointerDown = false;
 		//GameObject nowUnderMouse = GetObjectUnderMouse();
-		if(beingSelected != null && !dragged) { // Must be the same object that we started to click
+		if(beingSelected != null && !dragged) { // Drag means we are not selecting an object
 			if(selected != null) selected.SendMessage("OnDeselect", SendMessageOptions.DontRequireReceiver);
 			beingSelected.SendMessage("OnSelect", SendMessageOptions.DontRequireReceiver);
 			selected = beingSelected;

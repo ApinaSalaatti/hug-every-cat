@@ -83,6 +83,10 @@ public class CatFactory : MonoBehaviour {
 		return catSprite;
 	}
 
+	public GameObject CreateFromJSON(JSONObject json) {
+		return CreateEmpty();
+	}
+
 	public GameObject CreateFromFile(string filename) {
 		return CatExportImport.Instance.ImportCat(filename);
 	}

@@ -12,7 +12,9 @@ public class HomeGUI : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-	
+		if(Input.GetButtonDown("Cancel")) {
+			PauseMenu.Instance.Show();
+		}
 	}
 
 	public void Show() {
