@@ -4,7 +4,8 @@ using System.Collections;
 public class GameEvent {
 	// All possible event types. There's probably some really cool and beautiful way to do this.
 	public static int CAT_CREATED = 1;
-	public static int ITEM_ADDED = 2;
+	public static int HOUSE_ITEM_ADDED = 2;
+	public static int HOUSE_ITEM_REMOVED = 3;
 
 	private int gameEventType;
 	public int GameEventType {

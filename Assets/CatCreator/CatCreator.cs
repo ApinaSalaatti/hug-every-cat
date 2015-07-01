@@ -20,14 +20,6 @@ public class CatCreator : MonoBehaviour {
 	[SerializeField]
 	private GameObject randomizationTools;
 	[SerializeField]
-	private ColorTool randomColor1;
-	[SerializeField]
-	private Image randomColorPreview1;
-	[SerializeField]
-	private ColorTool randomColor2;
-	[SerializeField]
-	private Image randomColorPreview2;
-	[SerializeField]
 	private Toggle randomColorToggle;
 
 	[SerializeField]
@@ -104,12 +96,6 @@ public class CatCreator : MonoBehaviour {
 
 		// DRAWING UPDATE
 		color = fgSelector.Color;
-
-		// RANDOMIZER UPDATE
-		Color col = new Color(randomColor1.rSlider.value, randomColor1.gSlider.value, randomColor1.bSlider.value, 1f);
-		randomColorPreview1.color = col;
-		col = new Color(randomColor2.rSlider.value, randomColor2.gSlider.value, randomColor2.bSlider.value, 1f);
-		randomColorPreview2.color = col;
 
 		if(usingTool) {
 			// Pen will execute constantly until pointer button is released

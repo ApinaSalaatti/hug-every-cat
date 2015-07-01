@@ -21,11 +21,18 @@ public class HouseItemManager : MonoBehaviour {
 			i.SendMessage("WorldUpdate", deltaTime);
 		}
 	}
-	
+
+	public List<GameObject> GetItems() {
+		return items;
+	}
 	public void AddItem(GameObject i) {
 		items.Add(i);
+		i.SendMessage("OnAddedToWorld", SendMessageOptions.DontRequireReceiver);
+		GameEventManager.Instance.QueueEvent(GameEvent.HOUSE_ITEM_ADDED, i);
 	}
 	public void RemoveItem(GameObject i) {
 		items.Remove(i);
+		i.SendMessage("OnRemovedFromWorld", SendMessageOptions.DontRequireReceiver);
+		GameEventManager.Instance.QueueEvent(GameEvent.HOUSE_ITEM_REMOVED, i);
 	}
 }

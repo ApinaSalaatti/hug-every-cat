@@ -15,6 +15,26 @@ public class WorldTime : MonoBehaviour {
 	}
 
 	void WorldUpdate (float deltaTime) {
-	
+		minuteTimer += deltaTime;
+		if(minuteTimer >= minuteLength) {
+			minuteTimer = 0f;
+			minute++;
+			if(minute == 60) {
+				minute = 0;
+				hour++;
+				if(hour == 24) {
+					hour = 0;
+					day++;
+				}
+			}
+		}
+	}
+
+	public string GetTimeString(string format = "h:m") {
+		string ret = format;
+		ret = ret.Replace("h", hour.ToString("00"));
+		ret = ret.Replace("m", minute.ToString("00"));
+		ret = ret.Replace("d", day.ToString());
+		return ret;
 	}
 }

@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
+using System.Collections.Generic;
 
 public class ShopScreen : MonoBehaviour {
 	private static ShopScreen instance;
@@ -8,16 +10,87 @@ public class ShopScreen : MonoBehaviour {
 	/*
 	 * Instance stuff from here
 	 */
+	[SerializeField]
+	private GameObject buttonPrefab;
+
+	[SerializeField]
+	private Text categoryText;
+	[SerializeField]
+	private Transform shopButtonParent;
+	[SerializeField]
+	private Text selectedItemDetailsText;
+
+	private List<GameObject> shopButtons;
+
+	private ShopItem currentlySelectedItem; 
+	private GameObject itemBeingPlaced;
+
 	private bool screenShown = false;
 
 	// Use this for initialization
 	void Awake() {
 		instance = this;
+
+		shopButtons = new List<GameObject>();
+	}
+
+	public void SetShownItems(ShopItemCategory category) {
+		categoryText.text = category.ToString();
+
+		List<ShopItem> items = Shop.Instance.GetItems(category);
+		int amount = items.Count;
+		for(int i = 0; i < amount; i++) {
+			ShopItem si = items[i];
+			GameObject button = Instantiate(buttonPrefab);
+			button.GetComponent<Button>().onClick.AddListener(() => SetSelectedItem(si));
+			button.transform.SetParent(shopButtonParent);
+			shopButtons.Add(button);
+		}
+	}
+
+	public void StartItemPlacement() {
+		if(currentlySelectedItem != null && Player.Instance.Wallet.Money >= currentlySelectedItem.price) {
+			ItemPlacementMode.Instance.confirmListeners += ItemPlaced;
+			ItemPlacementMode.Instance.cancelListeners += CancelItemPlacement;
+			itemBeingPlaced = HouseItemFactory.Instance.CreateItemFromResource(currentlySelectedItem.resourceName);
+			ItemPlacementMode.Instance.Begin(itemBeingPlaced);
+			transform.localScale = Vector3.zero;
+		}
+	}
+	private void ItemPlaced() {
+		ItemPlacementDone();
+		HouseItemManager.Instance.AddItem(itemBeingPlaced);
+		itemBeingPlaced = null;
+		Player.Instance.Wallet.TakeMoney(currentlySelectedItem.price);
+	}
+	private void CancelItemPlacement() {
+		ItemPlacementDone();
+		Destroy(itemBeingPlaced);
+	}
+	private void ItemPlacementDone() {
+		transform.localScale = new Vector3(1f, 1f, 1f);
+		ItemPlacementMode.Instance.confirmListeners += ItemPlaced;
+		ItemPlacementMode.Instance.cancelListeners += CancelItemPlacement;
+	}
+
+	private void SetSelectedItem(ShopItem item) {
+		selectedItemDetailsText.text = item.name;
+		currentlySelectedItem = item;
+	}
+
+	private void Clear() {
+		foreach(GameObject button in shopButtons) {
+			Destroy(button);
+		}
+		shopButtons.Clear();
 	}
 
 	public void Show() {
 		transform.localScale = new Vector3(1f, 1f, 1f);
 		screenShown = true;
+
+		Clear();
+		SetShownItems(ShopItemCategory.CAT_NEED);
 	}
 	public void Hide() {
 		transform.localScale = Vector3.zero;

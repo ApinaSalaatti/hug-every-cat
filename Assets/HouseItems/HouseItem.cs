@@ -1,16 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-/*
- * Item usage effects
- */
-public class NeedIncreasedEffect {
+[System.Serializable]
+public class SatisfiedNeed {
 	public CatNeedType type;
-	public float amount;
-	public NeedIncreasedEffect(CatNeedType t, float a) {
-		type =t ;
-		amount = a;
-	}
+	public float amountPerSecond;
 }
 
 /*
@@ -22,9 +16,9 @@ public class HouseItem : MonoBehaviour {
 	public string ItemName { get { return itemName; } }
 
 	[SerializeField]
-	private CatNeedType[] satisfiedNeeds; // The needs this item satisfies when used, if any
-	[SerializeField]
-	private float[] amountSatisfiedPerSecond;
+	private SatisfiedNeed[] satisfiedNeeds;
+	private CatNeedType[] needTypes; // A list of need types this item satisfies, for quick access
+
 	[SerializeField]
 	private int simultaneouslyUsableBy;
 	[SerializeField]
@@ -36,6 +30,12 @@ public class HouseItem : MonoBehaviour {
 	void Awake() {
 		positionInUse = new bool[usePositions.Length];
 		users = new GameObject[usePositions.Length];
+
+		// Create the need types list
+		needTypes = new CatNeedType[satisfiedNeeds.Length];
+		for(int i = 0; i < needTypes.Length; i++) {
+			needTypes[i] = satisfiedNeeds[i].type;
+		}
 
 		ItemAwake();
 	}
@@ -52,10 +52,20 @@ public class HouseItem : MonoBehaviour {
 
 	private void ApplyEffect(GameObject user, float deltaTime) {
 		for(int i = 0; i < satisfiedNeeds.Length; i++) {
-			CatNeedType n = satisfiedNeeds[i];
-			float amountToIncrease = amountSatisfiedPerSecond[i] * deltaTime;
+			CatNeedType n = satisfiedNeeds[i].type;
+			float amountToIncrease = satisfiedNeeds[i].amountPerSecond * deltaTime;
 			user.SendMessage("NeedIncreased", new NeedIncreasedEffect(n, amountToIncrease));
 		}
+	}
+
+	public Transform GetUsePosition() {
+		for(int i = 0; i < positionInUse.Length; i++) {
+			if(!positionInUse[i]) {
+				return usePositions[i];
+			}
+		}
+
+		return null;
 	}
 
 	public bool StartUse(GameObject user) {
@@ -94,13 +104,20 @@ public class HouseItem : MonoBehaviour {
 	}
 
 	public virtual bool CanSatisfyNeed(CatNeedType type) {
-		foreach(CatNeedType t in satisfiedNeeds) {
-			if(t.Equals(type))
+		foreach(SatisfiedNeed s in satisfiedNeeds) {
+			if(s.type.Equals(type))
 				return true;
 		}
 		return false;
 	}
+	public virtual CatNeedType[] GetSatisfiedNeeds() {
+		return needTypes;
+	}
 
 	public virtual void ItemAwake() { }
 	public virtual void ItemUpdate(float deltaTime) { }
+
+	public void CreateFromJSON(JSONObject json) {
+
+	}
 }

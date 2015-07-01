@@ -23,10 +23,12 @@ public class SelectedObjectDetails : MonoBehaviour {
 
 	private DetailType shownDetailType;
 
+	private GameObject shownObject;
+
 	/*
 	 * Cat detail stuff
 	 */
-	private GameObject shownCat;
+	//private GameObject shownCat;
 	private CatStats catStats;
 	private CatNeeds catNeeds;
 
@@ -80,9 +82,14 @@ public class SelectedObjectDetails : MonoBehaviour {
 		needIndicator.GetComponent<RectTransform>().sizeDelta = size;
 	}
 
+	public void CenterCameraOnSelected() {
+		if(shownObject != null)
+			Camera.main.GetComponent<CameraMover>().CenterOnObject(shownObject);
+	}
+
 	public void OpenCatInfoScreen() {
-		if(shownCat != null)
-			CatInfoScreen.Instance.Show(shownCat);
+		if(shownDetailType == DetailType.CAT && shownObject != null)
+			CatInfoScreen.Instance.Show(shownObject);
 	}
 
 	public void ShowDetails(GameObject g, DetailType t) {
@@ -91,23 +98,29 @@ public class SelectedObjectDetails : MonoBehaviour {
 			return;
 		}
 
+		GetComponent<Animator>().SetBool("Open", true);
+
 		shown = true;
 
 		image.color = Color.white;
 
+		shownObject = g;
+
 		switch(t) {
 		case DetailType.CAT:
 			moreInfoButton.onClick.AddListener(OpenCatInfoScreen);
-			shownCat = g;
 			catStats = g.GetComponent<CatStats>();
 			catNeeds = g.GetComponent<CatNeeds>();
 			nameText.text = catStats.Name;
 			image.sprite = g.GetComponent<CatSpriteManager>().GetSprite();
+			image.color = Color.white;
 			catNeedsIndicatorObject.SetActive(true);
 			break;
 		case DetailType.HOUSE_ITEM:
 			nameText.text = g.GetComponent<HouseItem>().ItemName;
-			image.sprite = g.GetComponent<SpriteRenderer>().sprite;
+			SpriteRenderer sr = g.GetComponent<SpriteRenderer>();
+			image.sprite = sr.sprite;
+			image.color = sr.color; // Item might be tinted
 			break;
 		}
 
@@ -115,6 +128,9 @@ public class SelectedObjectDetails : MonoBehaviour {
 	}
 	public void HideDetails() {
 		shown = false;
+		shownObject = null;
+
+		GetComponent<Animator>().SetBool("Open", false);
 
 		moreInfoButton.onClick.RemoveAllListeners();
 

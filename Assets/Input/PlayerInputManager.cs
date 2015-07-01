@@ -9,9 +9,6 @@ public class PlayerInputManager : MonoBehaviour {
 	private bool pointerDown = false;
 	private bool dragged = false;
 
-	private bool movingObject = false;
-	private bool movingCamera = false;
-
 	// Use this for initialization
 	void Start () {
 		
@@ -63,16 +60,15 @@ public class PlayerInputManager : MonoBehaviour {
 	public void OnPointerDown() {
 		lastMousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 		beingSelected = GetObjectUnderMouse();
+		Debug.Log(beingSelected);
 		pointerDown = true;
 
 		// Reset these
 		dragged = false;
-		movingCamera = false;
-		movingObject = false;
 	}
 	public void OnPointerUp() {
 		pointerDown = false;
-		GameObject nowUnderMouse = GetObjectUnderMouse();
+		//GameObject nowUnderMouse = GetObjectUnderMouse();
 		if(beingSelected != null && !dragged) { // Must be the same object that we started to click
 			if(selected != null) selected.SendMessage("OnDeselect", SendMessageOptions.DontRequireReceiver);
 			beingSelected.SendMessage("OnSelect", SendMessageOptions.DontRequireReceiver);
@@ -87,7 +83,7 @@ public class PlayerInputManager : MonoBehaviour {
 	}
 
 	// Simple helper method to get the mouse's world position
-	public static Vector3 GetMouseWorldPosition() {
+	public static Vector2 GetMouseWorldPosition() {
 		return Camera.main.ScreenToWorldPoint(Input.mousePosition);
 	}
 }

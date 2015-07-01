@@ -10,6 +10,8 @@ public class WorldInit : MonoBehaviour {
 
 		HouseItem food = FindObjectOfType<HouseItem>();
 		HouseItemManager.Instance.AddItem(food.gameObject);
+
+		Player.Instance.Wallet.AddMoney(100);
 	}
 	
 	// Update is called once per frame

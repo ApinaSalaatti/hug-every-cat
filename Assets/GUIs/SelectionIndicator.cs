@@ -2,47 +2,55 @@
 using System.Collections;
 
 public class SelectionIndicator : MonoBehaviour {
-	private static GameObject indicatorObject;
+	private static SelectionIndicator instance;
+	public static SelectionIndicator Instance { get { return instance; } }
 
-	private static Renderer rendererToSize;
-	private static GameObject selectedObject;
-	private static float baseSize; // Used when scaling the indicator
+	private Renderer rendererToSize;
+	private GameObject selectedObject;
+	private float baseSize; // Used when scaling the indicator
 
 	private RectTransform rTransform;
 
 	// Use this for initialization
 	void Awake() {
-		indicatorObject = gameObject;
+		instance = this;
 		rTransform = GetComponent<RectTransform>();
-		indicatorObject.SetActive(false);
+		gameObject.SetActive(false);
 
+		// This seems to provide good results for the size of the indicator
 		float ratio = Screen.width / 615f;
-		baseSize = 60f * ratio; // This seems to provide good results for the size of the indicator
+		baseSize = 60f * ratio;
 	}
 	
 	// Update is called once per frame
 	void Update () {
 		if(selectedObject != null) {
-			Vector3 screenPos = Camera.main.WorldToScreenPoint(selectedObject.transform.position);
-			Vector3 size = rendererToSize.bounds.size;
-			size *= baseSize;
-
-			rTransform.sizeDelta = size;
-			transform.position = screenPos;
+			MoveToSelection();
 		}
 	}
 
-	public static void SetSelected(GameObject s, Renderer r) {
+	private void MoveToSelection() {
+		Vector3 screenPos = Camera.main.WorldToScreenPoint(selectedObject.transform.position);
+		Vector3 size = rendererToSize.bounds.size;
+		size *= baseSize;
+		
+		rTransform.sizeDelta = size;
+		transform.position = screenPos;
+	}
+
+	public void SetSelected(GameObject s, Renderer r) {
 		if(s == null || r == null) {
 			Hide();
 			return;
 		}
-
-		rendererToSize = r;
-		indicatorObject.SetActive(true);
 		selectedObject = s;
+		rendererToSize = r;
+
+		MoveToSelection();
+		gameObject.SetActive(true);
 	}
-	public static void Hide() {
-		indicatorObject.SetActive(false);
+	public void Hide() {
+		selectedObject = null;
+		gameObject.SetActive(false);
 	}
 }

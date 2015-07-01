@@ -2,14 +2,24 @@
 using System.Collections;
 
 public class HomeGUI : MonoBehaviour {
+	private static HomeGUI instance;
+	public static HomeGUI Instance { get { return instance; } }
 
 	// Use this for initialization
-	void Start () {
-	
+	void Awake() {
+		instance = this;
 	}
 	
 	// Update is called once per frame
 	void Update () {
 	
+	}
+
+	public void Show() {
+		transform.localScale = new Vector3(1f, 1f, 1f);
+	}
+
+	public void Hide() {
+		transform.localScale = Vector3.zero;
 	}
 }

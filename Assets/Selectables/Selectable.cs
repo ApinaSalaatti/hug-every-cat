@@ -10,12 +10,12 @@ public class Selectable : MonoBehaviour {
 	private DetailType detailType;
 
 	void OnSelect() {
-		SelectionIndicator.SetSelected(gameObject, renderer);
+		SelectionIndicator.Instance.SetSelected(gameObject, renderer);
 		SelectedObjectDetails.Instance.ShowDetails(gameObject, detailType);
 	}
 
 	void OnDeselect() {
-		SelectionIndicator.Hide();
+		SelectionIndicator.Instance.Hide();
 		SelectedObjectDetails.Instance.HideDetails();
 	}
 }

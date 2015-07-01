@@ -4,11 +4,11 @@ using System.Collections;
 public class Draggable : MonoBehaviour {
 
 	void OnSelect() {
-		Debug.Log("SELECTED!!");
+		//Debug.Log("SELECTED!!");
 	}
 
 	void OnDeselect() {
-		Debug.Log("Deselecteddddd!");
+		//Debug.Log("Deselecteddddd!");
 	}
 
 	void OnDrag() {

@@ -19,7 +19,7 @@ public class CatManager : MonoBehaviour {
 	// The WorldUpdate message is sent by the WorldUpdate class when the game is not paused
 	void WorldUpdate (float deltaTime) {
 		foreach(GameObject c in cats) {
-			c.SendMessage("CatUpdate", deltaTime);
+			c.BroadcastMessage("CatUpdate", deltaTime);
 		}
 	}
 

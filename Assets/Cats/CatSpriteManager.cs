@@ -21,6 +21,26 @@ public class CatSpriteManager : MonoBehaviour {
 		spriteRenderer = spriteObject.GetComponent<SpriteRenderer>();
 	}
 
+	/*
+	 * Sprite flipping
+	 */
+	private bool lookingLeft = false;
+	public void LookLeft() {
+		if(!lookingLeft)
+			FlipSprite();
+	}
+	public void LookRight() {
+		if(lookingLeft)
+			FlipSprite();
+	}
+	private void FlipSprite() {
+		lookingLeft = !lookingLeft;
+		
+		Vector3 scale = transform.localScale;
+		scale.x *= -1f;
+		transform.localScale = scale;
+	}
+
 	public void SetSprite(Sprite s) {
 		fullSprite = CopySprite(s);
 		Sprite body = CopySprite(s);
@@ -40,8 +60,8 @@ public class CatSpriteManager : MonoBehaviour {
 	}
 
 	private void SetEyes(Sprite s) {
-		s.texture.SetPixel(23, 24, s.texture.GetPixel(23, 25));
-		s.texture.SetPixel(27, 24, s.texture.GetPixel(27, 25));
+		s.texture.SetPixel(23, 21, s.texture.GetPixel(23, 22));
+		s.texture.SetPixel(27, 21, s.texture.GetPixel(27, 22));
 		s.texture.Apply();
 	}
 
