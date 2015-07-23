@@ -10,15 +10,15 @@ public class CatLoadDialog : MonoBehaviour {
 	
 	public delegate void CatSelectedListener(string selectedCatFilename, GameObject cat);
 	public delegate void CancelListener();
-
+	
 	public static CatLoadDialog Instance {
 		get { return instance; }
 	}
-
+	
 	void Awake() {
 		instance = this;
 	}
-
+	
 	/*
 	 * Used by the instance
 	 */
@@ -40,7 +40,7 @@ public class CatLoadDialog : MonoBehaviour {
 	
 	private Button[] catSelectButtons;
 	private GameObject[] selectableCats;
-
+	
 	private string selectedCatFilename;
 	private GameObject selectedCat;
 	
@@ -66,7 +66,7 @@ public class CatLoadDialog : MonoBehaviour {
 		HideDialog();
 		DestroySelectables();
 	}
-
+	
 	private void DestroySelectables() {
 		foreach(GameObject g in selectableCats) {
 			Destroy(g);
@@ -88,7 +88,7 @@ public class CatLoadDialog : MonoBehaviour {
 		for(int i = 0; i < files.Length; i++) {
 			string f = files[i];
 			string filename = System.IO.Path.GetFileName(f);
-
+			
 			GameObject b = Instantiate(catSelectButtonPrefab) as GameObject;
 			
 			RectTransform rt = b.GetComponent<RectTransform>();
@@ -96,10 +96,11 @@ public class CatLoadDialog : MonoBehaviour {
 			
 			Text t = b.GetComponentInChildren<Text>();
 			t.text = f;
-
+			
 			GameObject cat = CatExportImport.Instance.ImportCat(filename);
 			selectableCats[i] = cat;
 			
+			b.GetComponent<CatSelectButton>().SetCat(cat);
 			Button button = b.GetComponent<Button>();
 			button.onClick.AddListener(() => CatSelected(filename, cat));
 			

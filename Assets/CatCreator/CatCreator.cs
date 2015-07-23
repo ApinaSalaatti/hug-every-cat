@@ -21,12 +21,12 @@ public class CatCreator : MonoBehaviour {
 	private GameObject randomizationTools;
 	[SerializeField]
 	private Toggle randomColorToggle;
-
+	
 	[SerializeField]
 	private ColorSelector fgSelector;
 	[SerializeField]
 	private ColorSelector bgSelector;
-
+	
 	private FurRandomizationMethod method = FurRandomizationMethod.CELLULAR_AUTOMATA;
 	public FurRandomizationMethod CurrentRandomizationMethod { get { return method; } }
 	public void SetRandomizationMethod(int m) {
@@ -39,10 +39,10 @@ public class CatCreator : MonoBehaviour {
 			break;
 		}
 	}
-
+	
 	private Sprite emptyCat;
 	private Sprite legalPixels;
-
+	
 	/*
 	 * Used for editing the cat's stats
 	 */
@@ -52,7 +52,7 @@ public class CatCreator : MonoBehaviour {
 	private InputField catNameText;
 	[SerializeField]
 	private Toggle femaleToggle;
-
+	
 	/*
 	 * GameObject and and cached components of the cat that's being edited
 	 */
@@ -61,27 +61,27 @@ public class CatCreator : MonoBehaviour {
 	private Sprite catSprite;
 	public Sprite CatSprite { get { return catSprite; } }
 	private CatStats stats;
-
+	
 	private Color color = new Color();
-
+	
 	private DrawTool currentTool = DrawTool.PEN;
 	private bool usingTool = false;
-
+	
 	// Used tools are queued here for undo/redo
 	private List<CatCreatorTool> toolQueue = new List<CatCreatorTool>();
 	private int queueIndex = -1;
-
+	
 	/*
 	 * The name of the file the cat is currently being saved to
 	 */
 	private string currentFilename = "";
-
+	
 	void Awake() {
 		stats = cat.GetComponent<CatStats>();
-
+		
 		// Set the medium as chosen at the beginning
 		SetCatBody(1);
-
+		
 		ResetCat();
 	}
 	
@@ -93,23 +93,23 @@ public class CatCreator : MonoBehaviour {
 			stats.Gender = Gender.FEMALE;
 		else
 			stats.Gender = Gender.MALE;
-
+		
 		// DRAWING UPDATE
 		color = fgSelector.Color;
-
+		
 		if(usingTool) {
-			Debug.Log(queueIndex);
+			//Debug.Log(queueIndex);
 			// Pen will execute constantly until pointer button is released
 			if(toolQueue[queueIndex].toolType == DrawTool.PEN) {
 				toolQueue[queueIndex].Execute();
 			}
 		}
 	}
-
+	
 	public void RandomizeName() {
 		catNameText.text = CatFactory.Instance.RandomCatName(stats.Gender);
 	}
-
+	
 	// 0 = skinny, 1 = medium, 2 = fat
 	public void SetCatBody(int b) {
 		if(b == 0) {
@@ -145,18 +145,18 @@ public class CatCreator : MonoBehaviour {
 		}
 		ResetCat();
 	}
-
+	
 	// Returns true if the given pixel can be modified
 	public bool IsLegal(int x, int y) {
 		if(x < 0 || x >= legalPixels.texture.width || y < 0 || y >= legalPixels.texture.height)
 			return false;
-
+		
 		return legalPixels.texture.GetPixel(x, y).a > 0f;
 	}
-
+	
 	public void ResetCat() {
 		CopySpriteData(emptyCat);
-
+		
 		toolQueue.Clear();
 		queueIndex = -1;
 		usingTool = false;
@@ -169,14 +169,14 @@ public class CatCreator : MonoBehaviour {
 		catSprite = Sprite.Create(tex, s.rect, new Vector2(0.5f, 0.5f), s.pixelsPerUnit, 1, SpriteMeshType.Tight);
 		cat.GetComponent<SpriteRenderer>().sprite = catSprite;
 	}
-
+	
 	public void ShowRandomizationTools() {
 		randomizationTools.SetActive(true);
 	}
 	public void HideRandomizationTools() {
 		randomizationTools.SetActive(false);
 	}
-
+	
 	public void SetTool(int t) {
 		switch(t) {
 		case 0: currentTool = DrawTool.PEN; currentToolIndicator.text = "PEN"; break;
@@ -185,7 +185,7 @@ public class CatCreator : MonoBehaviour {
 		case 3: currentTool = DrawTool.RANDOM_FUR; currentToolIndicator.text = "RANDOMIZE"; break;
 		}
 	}
-
+	
 	public void UndoTool() {
 		if(queueIndex > -1) {
 			toolQueue[queueIndex].UndoExecute();
@@ -202,7 +202,7 @@ public class CatCreator : MonoBehaviour {
 	public void SetColor(float r, float g, float b) {
 		fgSelector.SetColor(r, g, b);
 	}
-
+	
 	public void StartTool() {
 		// The color picker is a special tool that doesn't go to the queue
 		if(currentTool == DrawTool.COLOR_PICKER) {
@@ -210,13 +210,13 @@ public class CatCreator : MonoBehaviour {
 			picker.Execute();
 			return;
 		}
-
+		
 		// Discard any undoed actions
 		int toDiscard = (toolQueue.Count - 1) - queueIndex;
 		if(toDiscard > 0) {
 			toolQueue.RemoveRange(queueIndex+1, toDiscard);
 		}
-
+		
 		usingTool = false;
 		switch(currentTool) {
 		case DrawTool.PEN:
@@ -228,24 +228,24 @@ public class CatCreator : MonoBehaviour {
 			break;
 		case DrawTool.RANDOM_FUR:
 			toolQueue.Add(new RandomFurTool(this, CurrentRandomizationMethod, randomColorToggle.isOn,
-				fgSelector.Color,
-			    bgSelector.Color
-			));
+			                                fgSelector.Color,
+			                                bgSelector.Color
+			                                ));
 			// Because the randomizer is not really a drawing tool, we reset the tool after every usage
 			SetTool(0);
 			break;
 		}
-
+		
 		// Set the index at the last item
 		queueIndex = toolQueue.Count-1;
-
+		
 		// Execute the tool
 		toolQueue[queueIndex].Execute();
 	}
 	public void EndTool() {
 		usingTool = false;
 	}
-
+	
 	public Color GetColorAt(int pixelX, int pixelY) {
 		Color c = catSprite.texture.GetPixel(pixelX, pixelY);
 		return new Color(c.r, c.g, c.b, c.a); // Copy the color so the references won't get all crazy and mixed up and whooa
@@ -254,7 +254,7 @@ public class CatCreator : MonoBehaviour {
 		catSprite.texture.SetPixel(pixelX, pixelY, c);
 		catSprite.texture.Apply();
 	}
-
+	
 	// A helper method to check if two colors are the same
 	public bool SameColor(Color col1, Color col2) {
 		//Debug.Log(col1.ToString() + " VS " + col2.ToString());
@@ -274,7 +274,7 @@ public class CatCreator : MonoBehaviour {
 		
 		// A correction because of the pivot point being at the center
 		mousePos.x += 0.5f;
-
+		
 		return Mathf.FloorToInt(mousePos.x * catSprite.texture.width);
 	}
 	public int GetMousePixelY() {
@@ -284,10 +284,10 @@ public class CatCreator : MonoBehaviour {
 		
 		// A correction because of the pivot point being at the center
 		mousePos.y += 0.5f; 
-
+		
 		return Mathf.FloorToInt(mousePos.y * catSprite.texture.height);
 	}
-
+	
 	public void ShowStatTools() {
 		statTools.transform.localScale = new Vector3(1f, 1f, 1f);
 	}
@@ -298,42 +298,42 @@ public class CatCreator : MonoBehaviour {
 	public void SaveCatData() {
 		currentFilename = CatExportImport.Instance.ExportCat(cat, currentFilename);
 	}
-
+	
 	private void OnCatSave() {
-
+		
 	}
-
+	
 	public void LoadCatData() {
 		CatLoadDialog.Instance.catSelectedListeners += OnCatLoad;
 		CatLoadDialog.Instance.cancelListeners += OnLoadCancel;
 		CatLoadDialog.Instance.ShowDialog(Globals.CatFolder);
 	}
-
+	
 	private void OnLoadCancel() {
 		CatLoadDialog.Instance.catSelectedListeners -= OnCatLoad;
 		CatLoadDialog.Instance.cancelListeners -= OnLoadCancel;
 	}
-
+	
 	private void OnCatLoad(string filename, GameObject c) {
 		CatLoadDialog.Instance.catSelectedListeners -= OnCatLoad; // No need to listen anymore
 		CatLoadDialog.Instance.cancelListeners -= OnLoadCancel;
-
+		
 		currentFilename = filename;
 		catNameText.text = c.GetComponent<CatStats>().Name;
 		
 		BodyType bt = c.GetComponent<CatStats>().BodyType;
 		SetCatBody(bt);
-
+		
 		ResetCat();
-
+		
 		CopySpriteData(c.GetComponent<CatSpriteManager>().GetSprite());
 	}
-
+	
 	public void FinalizeCat() {
 		// Serialize the cat so it can be loaded at game start
 		CatExportImport.Instance.ExportCat(cat, "startingCat");
 		Application.LoadLevel(2);
-
+		
 		//GameObject c = Instantiate(Globals.CatPrefab) as GameObject;
 		//c.GetComponent<CatSpriteManager>().SetSprite(cat.GetComponent<SpriteRenderer>().sprite);
 	}

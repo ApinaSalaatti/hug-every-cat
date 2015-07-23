@@ -13,7 +13,7 @@ public class CatPerceptions : MonoBehaviour, IGameEventListener {
 
 	private List<GameObject> uncheckedItems;
 
-	void Start() {
+	void OnAddedToWorld() {
 		hungerItems = new List<GameObject>();
 		cleanlinessItems = new List<GameObject>();
 		happinessItems = new List<GameObject>();
@@ -28,6 +28,11 @@ public class CatPerceptions : MonoBehaviour, IGameEventListener {
 
 		// When the cat comes to the house, she hasn't inspected any items
 		uncheckedItems.AddRange(HouseItemManager.Instance.GetItems());
+	}
+
+	void OnRemovedFromWorld() {
+		GameEventManager.Instance.RemoveListener(GameEvent.HOUSE_ITEM_ADDED, this);
+		GameEventManager.Instance.RemoveListener(GameEvent.HOUSE_ITEM_REMOVED, this);
 	}
 
 	void CatUpdate(float deltaTime) {

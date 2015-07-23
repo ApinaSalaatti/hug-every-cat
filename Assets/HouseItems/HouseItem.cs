@@ -14,42 +14,42 @@ public class HouseItem : MonoBehaviour {
 	[SerializeField]
 	private string itemName;
 	public string ItemName { get { return itemName; } }
-
+	
 	[SerializeField]
 	private SatisfiedNeed[] satisfiedNeeds;
 	private CatNeedType[] needTypes; // A list of need types this item satisfies, for quick access
-
+	
 	[SerializeField]
 	private int simultaneouslyUsableBy;
 	[SerializeField]
 	private Transform[] usePositions;
-
+	
 	private bool[] positionInUse;
 	private GameObject[] users;
-
+	
 	void Awake() {
 		positionInUse = new bool[usePositions.Length];
 		users = new GameObject[usePositions.Length];
-
+		
 		// Create the need types list
 		needTypes = new CatNeedType[satisfiedNeeds.Length];
 		for(int i = 0; i < needTypes.Length; i++) {
 			needTypes[i] = satisfiedNeeds[i].type;
 		}
-
+		
 		ItemAwake();
 	}
-
+	
 	void WorldUpdate(float deltaTime) {
 		ItemUpdate(deltaTime);
-
+		
 		// Apply the effect to all users
 		for(int i = 0; i < positionInUse.Length; i++) {
 			if(positionInUse[i])
 				ApplyEffect(users[i], deltaTime);
 		}
 	}
-
+	
 	private void ApplyEffect(GameObject user, float deltaTime) {
 		for(int i = 0; i < satisfiedNeeds.Length; i++) {
 			CatNeedType n = satisfiedNeeds[i].type;
@@ -57,17 +57,17 @@ public class HouseItem : MonoBehaviour {
 			user.SendMessage("NeedIncreased", new NeedIncreasedEffect(n, amountToIncrease));
 		}
 	}
-
+	
 	public Transform GetUsePosition() {
 		for(int i = 0; i < positionInUse.Length; i++) {
 			if(!positionInUse[i]) {
 				return usePositions[i];
 			}
 		}
-
+		
 		return null;
 	}
-
+	
 	public bool StartUse(GameObject user) {
 		int space = GetFreeSpace();
 		if(space > -1) {
@@ -75,7 +75,7 @@ public class HouseItem : MonoBehaviour {
 			users[space] = user;
 			return true;
 		}
-
+		
 		return false;
 	}
 	public void StopUse(GameObject user) {
@@ -86,7 +86,7 @@ public class HouseItem : MonoBehaviour {
 			}
 		}
 	}
-
+	
 	// Returns -1 if no free space found
 	private int GetFreeSpace() {
 		for(int i = 0; i < positionInUse.Length; i++) {
@@ -95,14 +95,14 @@ public class HouseItem : MonoBehaviour {
 		}
 		return -1;
 	}
-
+	
 	public bool HasSpace() {
 		foreach(bool b in positionInUse) {
 			if(!b) return true;
 		}
 		return false;
 	}
-
+	
 	public virtual bool CanSatisfyNeed(CatNeedType type) {
 		foreach(SatisfiedNeed s in satisfiedNeeds) {
 			if(s.type.Equals(type))
@@ -113,11 +113,21 @@ public class HouseItem : MonoBehaviour {
 	public virtual CatNeedType[] GetSatisfiedNeeds() {
 		return needTypes;
 	}
-
+	
 	public virtual void ItemAwake() { }
 	public virtual void ItemUpdate(float deltaTime) { }
-
-	public void CreateFromJSON(JSONObject json) {
-
+	
+	void Save(JSONObject json) {
+		JSONObject itemInfo = new JSONObject(JSONObject.Type.OBJECT);
+		
+		itemInfo.AddField("name", itemName);
+		itemInfo.AddField("simultaneouslyUsableBy", simultaneouslyUsableBy);
+		
+		json.AddField("itemInfo", itemInfo);
+	}
+	void Load(JSONObject json) {
+		JSONObject itemInfo = json.GetField("itemInfo");
+		itemName = itemInfo.GetField("name").str;
+		simultaneouslyUsableBy = (int)itemInfo.GetField("simultaneouslyUsableBy").n;
 	}
 }

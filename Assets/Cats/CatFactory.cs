@@ -6,11 +6,11 @@ public class CatFactory : MonoBehaviour {
 	public static CatFactory Instance {
 		get { return instance; }
 	}
-
+	
 	void Awake() {
 		instance = this;
 	}
-
+	
 	/*
 	 * Actual instance stuff starts here
 	 */
@@ -24,17 +24,17 @@ public class CatFactory : MonoBehaviour {
 		case Gender.MALE:
 			return maleNames[Random.Range(0, maleNames.Length)];
 		}
-
+		
 		// Unknown gender, just choose at random
 		if(Random.value > 0.5f) return RandomCatName(Gender.FEMALE);
 		else return RandomCatName(Gender.MALE);
 	}
-
+	
 	public Gender RandomGender() {
 		if(Random.value > 0.5f) return Gender.FEMALE;
 		else return Gender.MALE;
 	}
-
+	
 	public BodyType RandomBodyType() {
 		float r = Random.value;
 		if(r < 0.3f)
@@ -44,14 +44,14 @@ public class CatFactory : MonoBehaviour {
 		else
 			return BodyType.FAT;
 	}
-
+	
 	public GameObject CreateEmpty() {
 		return Instantiate(Globals.CatPrefab);
 	}
-
+	
 	public GameObject CreateRandom() {
 		GameObject cat = Instantiate(Globals.CatPrefab);
-
+		
 		Gender g = RandomGender();
 		string name = RandomCatName(g);
 		BodyType bt = RandomBodyType();
@@ -60,17 +60,25 @@ public class CatFactory : MonoBehaviour {
 		stats.Name = name;
 		stats.Gender = g;
 		stats.BodyType = bt;
-
+		
 		cat.GetComponent<CatSpriteManager>().SetSprite(CreateRandomSprite(bt));
-
+		
 		return cat;
 	}
-
+	
+	public GameObject LoadFromJSON(JSONObject json) {
+		GameObject cat = CreateEmpty();
+		
+		cat.BroadcastMessage("Load", json);
+		
+		return cat;
+	}
+	
 	private Sprite CreateRandomSprite(BodyType bt) {
 		RandomFur.UseRandomColors = true;
 		Sprite catSprite = Globals.CatImages.GetNewSprite(bt);
 		Color[,] cols = RandomFur.CellularAutomata(catSprite.texture.width, catSprite.texture.height);
-
+		
 		for(int y = 0; y < cols.GetLength(0); y++) {
 			for(int x = 0; x < cols.GetLength(1); x++) {
 				if(Globals.CatImages.IsLegal(x, y, bt)) {
@@ -79,14 +87,14 @@ public class CatFactory : MonoBehaviour {
 			}
 		}
 		catSprite.texture.Apply();
-
+		
 		return catSprite;
 	}
-
+	
 	public GameObject CreateFromJSON(JSONObject json) {
 		return CreateEmpty();
 	}
-
+	
 	public GameObject CreateFromFile(string filename) {
 		return CatExportImport.Instance.ImportCat(filename);
 	}

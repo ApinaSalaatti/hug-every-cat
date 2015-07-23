@@ -15,18 +15,38 @@ public class CatStats : MonoBehaviour {
 	public Gender Gender {
 		get; set;
 	}
-
+	
 	void Awake() {
-
+		
 	}
-
-	public void Save(JSONObject json) {
-		json.AddField("name", Name);
-		json.AddField("bodyType", BodyType.ToString());
-		json.AddField("gender", Gender.ToString());
+	
+	void Save(JSONObject json) {
+		JSONObject stats = new JSONObject(JSONObject.Type.OBJECT);
+		stats.AddField("name", Name);
+		stats.AddField("bodyType", BodyType.ToString());
+		stats.AddField("gender", Gender.ToString());
+		
+		json.AddField("stats", stats);
 	}
-
-	public void Load(JSONObject json) {
-
+	
+	void Load(JSONObject json) {
+		JSONObject stats = json.GetField("stats");
+		Name = name = stats.GetField("name").str; // Set the gameobject's name also
+		string btString = stats.GetField("bodyType").str;
+		string gString = stats.GetField("gender").str;
+		
+		if(btString.Equals(BodyType.SKINNY.ToString()))
+			BodyType = BodyType.SKINNY;
+		else if(btString.Equals(BodyType.MEDIUM.ToString()))
+			BodyType = BodyType.MEDIUM;
+		else if(btString.Equals(BodyType.FAT.ToString()))
+			BodyType = BodyType.FAT;
+		
+		if(gString.Equals(Gender.FEMALE.ToString()))
+			Gender = Gender.FEMALE;
+		else if(gString.Equals(Gender.MALE.ToString()))
+			Gender = Gender.MALE;
+		else
+			Gender = Gender.UNKNOWN;
 	}
 }
