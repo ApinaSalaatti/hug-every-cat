@@ -8,8 +8,8 @@ public class WorldInit : MonoBehaviour {
 	
 	// Use this for initialization
 	void Start () {
-		HouseItem food = FindObjectOfType<HouseItem>();
-		HouseItemManager.Instance.AddItem(food.gameObject);
+		//HouseItem food = FindObjectOfType<HouseItem>();
+		//HouseItemManager.Instance.AddItem(food.gameObject);
 		
 		if(File.Exists(Globals.TempDataFolder + "init")) {
 			string[] lines = File.ReadAllLines(Globals.TempDataFolder + "init");
@@ -29,10 +29,8 @@ public class WorldInit : MonoBehaviour {
 	
 	private void InitNew() {
 		Debug.Log("Initing new game");
-		Player.Instance.Wallet.AddMoney(100);
-		
-		GameObject c = CatFactory.Instance.CreateFromFile("startingCat");
-		CatManager.Instance.AddCat(c);
+
+		GameSaveLoad.Instance.StartNewGame();
 	}
 	private void InitLoad() {
 		Debug.Log("Initing load game");

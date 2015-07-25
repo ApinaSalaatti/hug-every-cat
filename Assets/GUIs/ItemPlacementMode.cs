@@ -39,6 +39,7 @@ public class ItemPlacementMode : MonoBehaviour {
 	}
 
 	public void Begin(GameObject item) {
+		Debug.Log("Starting to place item: " + item.name);
 		if(item != null) {
 			running = true;
 			transform.localScale = new Vector3(1f, 1f, 1f);

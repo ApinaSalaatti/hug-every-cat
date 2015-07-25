@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class HouseItemManager : MonoBehaviour {
+public class HouseItemManager : MonoBehaviour, ISaveable {
 	private static HouseItemManager instance;
 	public static HouseItemManager Instance { get { return instance; } }
 	
@@ -13,6 +13,8 @@ public class HouseItemManager : MonoBehaviour {
 		instance = this;
 		
 		items = new List<GameObject>();
+
+		GameSaveLoad.Instance.AddSaveable(this);
 	}
 	
 	// The WorldUpdate message is sent by the WorldUpdate class when the game is not paused
@@ -34,6 +36,10 @@ public class HouseItemManager : MonoBehaviour {
 		items.Remove(i);
 		i.BroadcastMessage("OnRemovedFromWorld", SendMessageOptions.DontRequireReceiver);
 		GameEventManager.Instance.QueueEvent(GameEvent.HOUSE_ITEM_REMOVED, i);
+	}
+
+	public void StartNewGame() {
+
 	}
 	
 	public void SaveGame() {

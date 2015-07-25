@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class CatManager : MonoBehaviour {
+public class CatManager : MonoBehaviour, ISaveable {
 	private static CatManager instance;
 	public static CatManager Instance { get { return instance; } }
 	
@@ -14,6 +14,8 @@ public class CatManager : MonoBehaviour {
 		instance = this;
 		
 		cats = new List<GameObject>();
+
+		GameSaveLoad.Instance.AddSaveable(this);
 	}
 	
 	// The WorldUpdate message is sent by the WorldUpdate class when the game is not paused
@@ -33,6 +35,11 @@ public class CatManager : MonoBehaviour {
 		cats.Remove(c);
 		c.BroadcastMessage("OnRemovedFromWorld", SendMessageOptions.DontRequireReceiver);
 		GameEventManager.Instance.QueueEvent(GameEvent.CAT_REMOVED, c);
+	}
+
+	public void StartNewGame() {
+		GameObject c = CatFactory.Instance.CreateFromFile("startingCat");
+		AddCat(c);
 	}
 	
 	public void SaveGame() {

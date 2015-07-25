@@ -18,6 +18,8 @@ public class GameEventManager : MonoBehaviour {
 
 	// Use this for initialization
 	void Awake() {
+		Debug.Log("Creating GameEventManager");
+
 		// Set the static instance
 		instance = this;
 

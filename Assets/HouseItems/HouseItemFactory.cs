@@ -37,7 +37,7 @@ public class HouseItemFactory : MonoBehaviour {
 		string posString = tr.GetField("position").str;
 		posString = posString.Replace("(", "");
 		posString = posString.Replace(")", "");
-		Debug.Log(posString);
+
 		string[] coords = posString.Split(',');
 		Vector3 pos = new Vector3(float.Parse(coords[0]), float.Parse(coords[1]), float.Parse(coords[2]));
 		item.transform.position = pos;

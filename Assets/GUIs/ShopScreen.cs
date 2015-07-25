@@ -75,8 +75,8 @@ public class ShopScreen : MonoBehaviour {
 	}
 	private void ItemPlacementDone() {
 		transform.localScale = new Vector3(1f, 1f, 1f);
-		ItemPlacementMode.Instance.confirmListeners += ItemPlaced;
-		ItemPlacementMode.Instance.cancelListeners += CancelItemPlacement;
+		ItemPlacementMode.Instance.confirmListeners -= ItemPlaced;
+		ItemPlacementMode.Instance.cancelListeners -= CancelItemPlacement;
 	}
 
 	private void SetSelectedItem(ShopItem item) {
