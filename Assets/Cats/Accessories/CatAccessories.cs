@@ -2,6 +2,7 @@
 using System.Collections;
 
 public class CatAccessories : MonoBehaviour {
+	[SerializeField]
 	private GameObject hatObject;
 
 	// Use this for initialization
@@ -9,7 +10,10 @@ public class CatAccessories : MonoBehaviour {
 	
 	}
 
+	public void SetHat(Sprite h) {
+		hatObject.GetComponent<SpriteRenderer>().sprite = h;
+	}
 	public void SetHat(string h) {
-
+		hatObject.GetComponent<SpriteRenderer>().sprite = CatAccessoryManager.Instance.GetHat(h);
 	}
 }

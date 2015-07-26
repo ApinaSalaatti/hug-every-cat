@@ -2,35 +2,44 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class CatAccessoryManager : MonoBehaviour, ISaveable {
-	private CatAccessoryManager instance;
-	public CatAccessoryManager Instance { get { return instance; } }
+[System.Serializable]
+public class AccessoryData {
+	public string name;
+	public Sprite sprite;
+}
+
+public class CatAccessoryManager : MonoBehaviour {
+	private static CatAccessoryManager instance;
+	public static CatAccessoryManager Instance { get { return instance; } }
 
 	[SerializeField]
-	private Dictionary<string, Sprite> allHats;
+	private AccessoryData[] allHats;
 
 	private List<string> availableHats;
+	public List<string> AvailableHats { get { return availableHats; } }
 
 	// Use this for initialization
 	void Awake() {
 		instance = this;
 
-		//allHats = new Dictionary<string, Sprite>();
+		availableHats = new List<string>();
+		availableHats.Add("Top Hat");
+	}
+
+	public bool HatAvailable(string hat) {
+		return availableHats.Contains(hat);
 	}
 
 	public Sprite GetHat(string hat) {
-		return allHats[hat];
+		foreach(AccessoryData data in allHats) {
+			if(data.name == hat) {
+				return data.sprite;
+			}
+		}
+		return null;
 	}
 
-	public void StartNewGame() {
-
-	}
-
-	public void SaveGame() {
-
-	}
-
-	public void LoadGame() {
-
+	public void AddAvailableHat(string hat) {
+		availableHats.Add(hat);
 	}
 }

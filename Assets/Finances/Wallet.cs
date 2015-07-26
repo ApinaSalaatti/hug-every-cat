@@ -7,7 +7,7 @@ public class Wallet : MonoBehaviour, ISaveable {
 		get { return money; }
 	}
 
-	void Start() {
+	void Awake() {
 		GameSaveLoad.Instance.AddSaveable(this);
 	}
 
@@ -24,14 +24,22 @@ public class Wallet : MonoBehaviour, ISaveable {
 	}
 
 	public void StartNewGame() {
+		Debug.Log("Creating new wallet...");
 		AddMoney(100);
 	}
 
-	public void LoadGame() {
+	public void SaveGame() {
+		JSONObject json = new JSONObject(JSONObject.Type.OBJECT);
+		json.AddField("money", money);
 
+		using(System.IO.StreamWriter file = new System.IO.StreamWriter(Globals.SaveFolder + "wallet")) {
+			file.WriteLine(json.Print());
+		}
 	}
 
-	public void SaveGame() {
-
+	public void LoadGame() {
+		string[] lines = System.IO.File.ReadAllLines(Globals.SaveFolder + "wallet");
+		JSONObject json = new JSONObject(lines[0]);
+		money = (int)json.GetField("money").n;
 	}
 }

@@ -46,6 +46,13 @@ public class ShopScreen : MonoBehaviour {
 			GameObject button = Instantiate(buttonPrefab);
 			button.GetComponent<Button>().onClick.AddListener(() => SetSelectedItem(si));
 			button.transform.SetParent(shopButtonParent);
+			Image[] imgs = button.GetComponentsInChildren<Image>();
+			foreach(Image img in imgs) {
+				// Stupid way to find the child object's component, because the GetComponentInChildren-method actually returns the parent
+				if(img.gameObject != button) {
+					img.sprite = Resources.Load<Sprite>(si.imageResource);
+				}
+			}
 			shopButtons.Add(button);
 		}
 	}

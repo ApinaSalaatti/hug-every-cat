@@ -8,7 +8,8 @@ public class ShopItem {
 	public string resourceName;
 	public string name;
 	public string description;
-	public Sprite image;
+	public string imageResource;
+	public bool enableColoring;
 	public int price;
 	public ShopItemCategory category;
 }
@@ -33,7 +34,8 @@ public class Shop : MonoBehaviour {
 		it.resourceName = "food";
 		it.name = "Food Bowl";
 		it.description = "A basic food bowl for a pet";
-		it.image = null;
+		it.imageResource = "foodBowl_shop";
+		it.enableColoring = true;
 		it.price = 10;
 		it.category = ShopItemCategory.FOR_CATS;
 		AddItem(it);
@@ -42,7 +44,8 @@ public class Shop : MonoBehaviour {
 		it.resourceName = "camera";
 		it.name = "Camera";
 		it.description = "A Catdak 500 precision camera";
-		it.image = null;
+		it.imageResource = "camera_shop";
+		it.enableColoring = false;
 		it.price = 50;
 		it.category = ShopItemCategory.FOR_HUMANS;
 		AddItem(it);

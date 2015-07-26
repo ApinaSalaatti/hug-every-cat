@@ -40,6 +40,7 @@ public class GameSaveLoad : MonoBehaviour {
 	// Informs all saveables to "start from scratch"
 	public void StartNewGame() {
 		foreach(ISaveable s in saveables) {
+			Debug.Log("Calling StartNewGame of " + s);
 			s.StartNewGame();
 		}
 	}
