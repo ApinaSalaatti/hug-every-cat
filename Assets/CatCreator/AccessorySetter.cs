@@ -13,16 +13,10 @@ public class AccessorySetter : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		string[] availableHats = CatAccessoryManager.Instance.AvailableHats.ToArray();
+		hats = CatAccessoryManager.Instance.AvailableHats.ToArray();
 
-		hats = new string[availableHats.Length+1];
-		hats[0] = null;
-		for(int i = 0; i < availableHats.Length; i++) {
-			Debug.Log(availableHats[i]);
-			hats[i+1] = availableHats[i];
-		}
-		Debug.Log(hats.Length);
 		hatIndex = 0;
+		ChangeHat(0);
 	}
 	
 	// Update is called once per frame
@@ -41,6 +35,8 @@ public class AccessorySetter : MonoBehaviour {
 		Sprite hat = CatAccessoryManager.Instance.GetHat(hats[hatIndex]);
 		previewImage.sprite = hat;
 
+		Debug.Log(changeInIndex);
+		Debug.Log(hats[hatIndex]);
 		accessories.SetHat(hat);
 	}
 }

@@ -15,6 +15,9 @@ public class Photography : MonoBehaviour {
 	[SerializeField]
 	private GameObject polaroid;
 
+	[SerializeField]
+	private CatstagramAPI catstagram;
+
 	// Use this for initialization
 	void Awake() {
 		instance = this;
@@ -53,6 +56,11 @@ public class Photography : MonoBehaviour {
 				bw.Write(bytes);
 			}
 		}
+	}
+
+	public void SendToCatstagram() {
+		Debug.Log("Let's send the image!");
+		catstagram.SendCatImage(destinationImage.sprite.texture);
 	}
 
 	public void ShowPreview() {

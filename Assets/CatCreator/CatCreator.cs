@@ -75,6 +75,9 @@ public class CatCreator : MonoBehaviour {
 	 * The name of the file the cat is currently being saved to
 	 */
 	private string currentFilename = "";
+
+	[SerializeField]
+	private TemporaryMessage saveInfoText;
 	
 	void Awake() {
 		stats = cat.GetComponent<CatStats>();
@@ -297,6 +300,7 @@ public class CatCreator : MonoBehaviour {
 	
 	public void SaveCatData() {
 		currentFilename = CatExportImport.Instance.ExportCat(cat, currentFilename);
+		saveInfoText.Show("Save successful", 4f);
 	}
 	
 	private void OnCatSave() {
@@ -315,6 +319,8 @@ public class CatCreator : MonoBehaviour {
 	}
 	
 	private void OnCatLoad(string filename, GameObject c) {
+		saveInfoText.Show("Load successful", 4f);
+
 		CatLoadDialog.Instance.catSelectedListeners -= OnCatLoad; // No need to listen anymore
 		CatLoadDialog.Instance.cancelListeners -= OnLoadCancel;
 		

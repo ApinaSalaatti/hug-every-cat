@@ -23,7 +23,17 @@ public class CatAccessoryManager : MonoBehaviour {
 		instance = this;
 
 		availableHats = new List<string>();
+		availableHats.Add("Empty");
 		availableHats.Add("Top Hat");
+		availableHats.Add("Cat Ears");
+		availableHats.Add("Rabbit Ears");
+		availableHats.Add("Bowler Hat");
+		availableHats.Add("Sombrero");
+		availableHats.Add("Trilby");
+		availableHats.Add("Stetson");
+		availableHats.Add("Bow");
+		availableHats.Add("Motorcycle Helmet");
+		availableHats.Add("Flowers");
 	}
 
 	public bool HatAvailable(string hat) {

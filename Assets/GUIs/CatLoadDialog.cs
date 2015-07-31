@@ -57,9 +57,11 @@ public class CatLoadDialog : MonoBehaviour {
 	}
 	
 	private void OkPressed() {
-		if(catSelectedListeners != null) catSelectedListeners(selectedCatFilename, selectedCat);
-		HideDialog();
-		DestroySelectables();
+		if(selectedCat != null) {
+			if(catSelectedListeners != null) catSelectedListeners(selectedCatFilename, selectedCat);
+			HideDialog();
+			DestroySelectables();
+		}
 	}
 	private void CancelPressed() {
 		if(cancelListeners != null) cancelListeners();
