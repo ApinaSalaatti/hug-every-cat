@@ -7,8 +7,13 @@ public class Photography : MonoBehaviour {
 	private static Photography instance;
 	public static Photography Instance { get { return instance; } }
 
+	public delegate void PhotoDoneListener();
+	public PhotoDoneListener listeners;
+
 	[SerializeField]
 	private GameObject cameraButton;
+	[SerializeField]
+	private GameObject catstagramButton;
 
 	[SerializeField]
 	private Image destinationImage;
@@ -44,8 +49,11 @@ public class Photography : MonoBehaviour {
 		tex.Apply();
 		destinationImage.sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0.5f));
 
-		ShowPreview();
+		if(listeners != null) listeners();
 
+		//catstagramButton.SetActive(true);
+		catstagram.Reset();
+		ShowPreview();
 		Show();
 	}
 
@@ -60,6 +68,7 @@ public class Photography : MonoBehaviour {
 
 	public void SendToCatstagram() {
 		Debug.Log("Let's send the image!");
+		//catstagramButton.SetActive(false);
 		catstagram.SendCatImage(destinationImage.sprite.texture);
 	}
 

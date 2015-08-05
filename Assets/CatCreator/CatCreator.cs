@@ -78,6 +78,10 @@ public class CatCreator : MonoBehaviour {
 
 	[SerializeField]
 	private TemporaryMessage saveInfoText;
+
+	// Used to disable the GUI while taking a photo
+	[SerializeField]
+	private GameObject canvasObject;
 	
 	void Awake() {
 		stats = cat.GetComponent<CatStats>();
@@ -297,7 +301,28 @@ public class CatCreator : MonoBehaviour {
 	public void HideStatTools() {
 		statTools.transform.localScale = Vector3.zero;
 	}
-	
+
+	/*
+	 * =============================
+	 * PHOTO!!
+	 * =============================
+	 */
+	public void TakePhoto() {
+		canvasObject.SetActive(false);
+		Photography.Instance.listeners += PhotoDone;
+		Photography.Instance.TakePhoto();
+	}
+
+	private void PhotoDone() {
+		Photography.Instance.listeners -= PhotoDone;
+		canvasObject.SetActive(true);
+	}
+
+	/*
+	 * =============================
+	 * SAVING AND LOADING
+	 * =============================
+	 */
 	public void SaveCatData() {
 		currentFilename = CatExportImport.Instance.ExportCat(cat, currentFilename);
 		saveInfoText.Show("Save successful", 4f);
