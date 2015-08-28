@@ -11,17 +11,14 @@ public class Photography : MonoBehaviour {
 	public PhotoDoneListener listeners;
 
 	[SerializeField]
-	private GameObject cameraButton;
-	[SerializeField]
-	private GameObject catstagramButton;
-
-	[SerializeField]
 	private Image destinationImage;
 	[SerializeField]
 	private GameObject polaroid;
 
 	[SerializeField]
 	private CatstagramAPI catstagram;
+	[SerializeField]
+	private CatstagramSendGUI catstagramGUI;
 
 	// Use this for initialization
 	void Awake() {
@@ -52,7 +49,8 @@ public class Photography : MonoBehaviour {
 		if(listeners != null) listeners();
 
 		//catstagramButton.SetActive(true);
-		catstagram.Reset();
+		//catstagram.Reset();
+		catstagramGUI.Reset();
 		ShowPreview();
 		Show();
 	}
@@ -69,7 +67,9 @@ public class Photography : MonoBehaviour {
 	public void SendToCatstagram() {
 		Debug.Log("Let's send the image!");
 		//catstagramButton.SetActive(false);
-		catstagram.SendCatImage(destinationImage.sprite.texture);
+		//catstagram.SendCatImage(destinationImage.sprite.texture);
+		catstagramGUI.SetImageToSend(destinationImage.sprite.texture);
+		catstagramGUI.Open();
 	}
 
 	public void ShowPreview() {
@@ -84,12 +84,5 @@ public class Photography : MonoBehaviour {
 	}
 	public void Hide() {
 		transform.localScale = Vector3.zero;
-	}
-
-	public void Enable() {
-		cameraButton.SetActive(true);
-	}
-	public void Disable() {
-		cameraButton.SetActive(false);
 	}
 }

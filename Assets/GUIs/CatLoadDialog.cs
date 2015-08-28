@@ -8,15 +8,32 @@ public class CatLoadDialog : MonoBehaviour {
 	 */
 	private static CatLoadDialog instance;
 	
-	public delegate void CatSelectedListener(string selectedCatFilename, GameObject cat);
+	public delegate void CatSelectedListener(string selectedCatFilename, CatExportImportData cat);
 	public delegate void CancelListener();
 	
 	public static CatLoadDialog Instance {
 		get { return instance; }
 	}
+
+	private int catsAvailable;
+	public int CatsAvailable {
+		get { return catsAvailable; }
+	}
 	
 	void Awake() {
 		instance = this;
+
+		string pathToDirectory = Globals.CatFolder;
+
+		// Count available cats (is used in the main menu to determine if any cats have been created already)
+		string[] files = System.IO.Directory.GetFiles(pathToDirectory, "*.catFile");
+		catsAvailable = 0;
+		for(int i = 0; i < files.Length; i++) {
+			string filename = System.IO.Path.GetFileNameWithoutExtension(files[i]);
+			// Don't count the starting cat
+			if(!filename.Equals("startingCat"))
+				catsAvailable++;
+		}
 	}
 	
 	/*
@@ -39,21 +56,20 @@ public class CatLoadDialog : MonoBehaviour {
 	public CancelListener cancelListeners;
 	
 	private Button[] catSelectButtons;
-	private GameObject[] selectableCats;
+	private CatExportImportData[] selectableCats;
 	
 	private string selectedCatFilename;
-	private GameObject selectedCat;
+	private CatExportImportData selectedCat;
 	
 	void Start() {
 		okButton.onClick.AddListener(OkPressed);
 		cancelButton.onClick.AddListener(CancelPressed);
 	}
 	
-	private void CatSelected(string file, GameObject cat) {
+	private void CatSelected(string file, CatExportImportData cat) {
 		selectedCatFilename = file;
 		selectedCat = cat;
-		CatStats stats = cat.GetComponent<CatStats>();
-		selectedCatInfo.text = stats.Name;
+		selectedCatInfo.text = cat.name;
 	}
 	
 	private void OkPressed() {
@@ -70,27 +86,34 @@ public class CatLoadDialog : MonoBehaviour {
 	}
 	
 	private void DestroySelectables() {
-		foreach(GameObject g in selectableCats) {
-			Destroy(g);
-		}
+		selectableCats = null;
+		//foreach(GameObject g in selectableCats) {
+		//	Destroy(g);
+		//}
 	}
 	
-	public void ShowDialog(string pathToDirectory) {
+	public void ShowDialog() {
+		string pathToDirectory = Globals.CatFolder;
+
 		// Clear old stuff
 		if(catSelectButtons != null && catSelectButtons.Length > 0) {
 			foreach(Button b in catSelectButtons) {
-				Destroy(b.gameObject);
+				if(b != null) Destroy(b.gameObject);
 			}
 		}
 		dialogObject.SetActive(true);
 		
 		string[] files = System.IO.Directory.GetFiles(pathToDirectory, "*.catFile");
 		catSelectButtons = new Button[files.Length];
-		selectableCats = new GameObject[files.Length];
+		selectableCats = new CatExportImportData[files.Length];
 		for(int i = 0; i < files.Length; i++) {
 			string f = files[i];
-			string filename = System.IO.Path.GetFileName(f);
-			
+			string filename = System.IO.Path.GetFileNameWithoutExtension(f);
+
+			// Don't show the starting cat
+			if(filename.Equals("startingCat"))
+				continue;
+
 			GameObject b = Instantiate(catSelectButtonPrefab) as GameObject;
 			
 			RectTransform rt = b.GetComponent<RectTransform>();
@@ -99,7 +122,7 @@ public class CatLoadDialog : MonoBehaviour {
 			Text t = b.GetComponentInChildren<Text>();
 			t.text = f;
 			
-			GameObject cat = CatExportImport.Instance.ImportCat(filename);
+			CatExportImportData cat = CatExportImport.Instance.ImportCat(filename);
 			selectableCats[i] = cat;
 			
 			b.GetComponent<CatSelectButton>().SetCat(cat);

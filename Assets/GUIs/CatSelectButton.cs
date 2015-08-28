@@ -8,8 +8,9 @@ public class CatSelectButton : MonoBehaviour {
 	[SerializeField]
 	private Text text;
 
-	public void SetCat(GameObject cat) {
-		image.sprite = cat.GetComponent<CatSpriteManager>().GetSprite();
-		text.text = cat.GetComponent<CatStats>().Name;
+	public void SetCat(CatExportImportData cat) {
+		Sprite s = Sprite.Create(cat.texture, new Rect(0f, 0f, 32f, 32f), new Vector2(0.5f, 0.5f), 32);
+		image.sprite = s;
+		text.text = cat.name;
 	}
 }

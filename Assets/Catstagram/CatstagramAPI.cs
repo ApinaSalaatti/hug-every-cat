@@ -6,53 +6,95 @@ using System.Security.Cryptography;
 
 public class CatstagramAPI : MonoBehaviour {
 	private string secretKey = "";
-	private string sendImageUrl = "http://skeidaa.com/catstagram/backend/add";
-	private string findImageUrl = "http://skeidaa.com/catstagram/#/";
+	private string userGUID;
 
-	[SerializeField]
-	private GameObject gui;
-	[SerializeField]
-	private Text infoText;
-	[SerializeField]
-	private Button sendButton;
-	[SerializeField]
-	private InputField descriptionField;
-	[SerializeField]
-	private InputField nameField;
-	[SerializeField]
-	private InputField findUrlField;
+	private string getRandomImagesUrl = "http://skeidaa.com/catstagram/backend/";
+	private string getCatOfTheDayUrl = "http://skeidaa.com/catstagram/backend/catoftheday";
 
-	private Texture2D image;
-		
-	public void SendCatImage(Texture2D img) {
-		image = img;
-		gui.SetActive(true);
-	}
-	public void Close() {
-		gui.SetActive(false);
+	private string sendImageUrl = "http://skeidaa.com/catstagram/backend/add/";
+	public string SendImageUrl {
+		get { return sendImageUrl; }
 	}
 
-	public void Reset() {
-		infoText.text = "";
-		infoText.gameObject.SetActive(false);
-		sendButton.gameObject.SetActive(true);
-		image = null;
-		descriptionField.gameObject.SetActive(true);
-		descriptionField.text = "";
-		findUrlField.transform.parent.gameObject.SetActive(false);
-		findUrlField.text = "";
+	private string findImageUrl = "http://skeidaa.com/catstagram/backend/cat/";
+	public string FindImageUrl {
+		get { return findImageUrl; }
 	}
 
-	public void StartImageSend() {
-		StartCoroutine(Send(image, descriptionField.text, nameField.text));
+	private string getImageDataUrl = "http://skeidaa.com/catstagram/backend/images/";
+
+	private string sendLikeUrl = "http://skeidaa.com/catstagram/backend/cat/like/";
+	public string SendLikeUrl {
+		get { return sendLikeUrl; }
 	}
-	private IEnumerator Send(Texture2D image, string desc = "", string catName = "Unnamed Cat") {
+	private string sendUnlikeUrl = "http://skeidaa.com/catstagram/backend/cat/unlike/";
+	public string SendUnlikeUrl {
+		get { return sendUnlikeUrl; }
+	}
+
+	public delegate void CatstagramEventListener(WWW response);
+	public CatstagramEventListener imageSendDoneListeners;
+	public CatstagramEventListener randomImagesGetListener;
+	public CatstagramEventListener errorListeners;
+
+	public void SetGUID() {
+		if(File.Exists(Globals.SaveFolder + "userGUID")) {
+			string[] lines = System.IO.File.ReadAllLines(Globals.SaveFolder + "userGUID");
+			userGUID = lines[0];
+		}
+		else {
+			// Create a new guid, set it and save it!
+			System.Guid guid = System.Guid.NewGuid();
+			userGUID = guid.ToString().ToUpper();
+			using(System.IO.StreamWriter file = new System.IO.StreamWriter(Globals.SaveFolder + "userGUID")) {
+				file.WriteLine(userGUID);
+			}
+		}
+		Debug.Log("GUID: " + userGUID);
+	}
+
+	private IEnumerator Connect(string url, WWWForm data, CatstagramEventListener listener, bool addUserID = true) {
+		if(userGUID == null || userGUID == "") {
+			SetGUID();
+		}
+
+		// When sending data, we must provide the userID and the userID hashed
+		if(addUserID) {
+			if(data != null) {
+				string hashedID = "";
+				using(MD5 md5 = MD5.Create()) {
+					byte[] bytes = System.Text.Encoding.UTF8.GetBytes(userGUID + secretKey);
+					bytes = md5.ComputeHash(bytes);
+					for (int i=0; i < bytes.Length; i++)
+						hashedID += bytes[i].ToString("x2").ToLower();
+				}
+				data.AddField("userID", userGUID, System.Text.Encoding.UTF8);
+				data.AddField("key", hashedID, System.Text.Encoding.UTF8);
+			}
+			else {
+				// Else just append the userID as a GET parameter
+				url += "?userID=" + userGUID;
+			}
+		}
+
+		Debug.Log("Connecting...");
+		Debug.Log("URL: " + url);
+		if(data != null) {
+			// This sends a POST request
+			WWW www = new WWW(url, data);
+			yield return www;
+			if(listener != null) listener(www);
+		}
+		else {
+			// This sends a GET request
+			WWW www = new WWW(url);
+			yield return www;
+			if(listener != null) listener(www);
+		}
+	}
+
+	public void SendCatImage(Texture2D image, string desc = "", string catName = "Unnamed Cat") {
 		Debug.Log("Sending...");
-
-		sendButton.gameObject.SetActive(false);
-		descriptionField.gameObject.SetActive(false);
-		infoText.gameObject.SetActive(true);
-		infoText.text = "Sending image, please wait...";
 
 		byte[] bytes = image.EncodeToPNG();
 
@@ -79,20 +121,40 @@ public class CatstagramAPI : MonoBehaviour {
 			form.AddField("description", desc, System.Text.Encoding.UTF8);
 			form.AddBinaryData("image", bytes);
 
-			WWW www = new WWW(sendImageUrl, form);
-			yield return www;
-			Debug.Log(www.text);
-			try {
-				JSONObject json = new JSONObject(www.text);
-				Debug.Log(json.GetField("id").str);
-				infoText.text = "Image sent!";
-				findUrlField.transform.parent.gameObject.SetActive(true);
-				findUrlField.text = findImageUrl + json.GetField("id").str;
-			}
-			catch(System.Exception) {
-				infoText.text = "Something went wrong. Check your Internet connection and try again!";
-				sendButton.gameObject.SetActive(true);
-			}
+			StartCoroutine(Connect(sendImageUrl, form, imageSendDoneListeners, false));
 		}
+	}
+
+	public void SendLike(string id) {
+		Debug.Log("Sending like for ID: " + id);
+		WWWForm data = new WWWForm();
+		data.AddField("image", id, System.Text.Encoding.UTF8);
+
+		StartCoroutine(Connect(sendLikeUrl, data, null));
+	}
+
+	public void SendUnlike(string id) {
+		Debug.Log("Sending unlike for ID: " + id);
+		WWWForm data = new WWWForm();
+		data.AddField("image", id, System.Text.Encoding.UTF8);
+
+		StartCoroutine(Connect(sendUnlikeUrl, data, null));
+	}
+
+	public void GetRandomImages() {
+		Debug.Log("Getting random images");
+		StartCoroutine(Connect(getRandomImagesUrl, null, randomImagesGetListener));
+	}
+
+	public void GetCatOfTheDay(CatstagramEventListener listener) {
+		StartCoroutine(Connect(getCatOfTheDayUrl, null, listener));
+	}
+
+	public void GetImage(string id, CatstagramEventListener listener) {
+		StartCoroutine(Connect(findImageUrl + id, null, listener));
+	}
+
+	public void GetImageData(string id, CatstagramEventListener listener) {
+		StartCoroutine(Connect(getImageDataUrl + id, null, listener));
 	}
 }

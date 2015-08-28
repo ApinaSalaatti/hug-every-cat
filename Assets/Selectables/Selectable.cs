@@ -4,7 +4,7 @@ using System.Collections;
 public class Selectable : MonoBehaviour {
 	// The renderer to use when determining the size of the selection
 	[SerializeField]
-	private Renderer renderer;
+	private new Renderer renderer;
 
 	[SerializeField]
 	private DetailType detailType;

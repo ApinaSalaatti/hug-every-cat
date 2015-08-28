@@ -64,8 +64,6 @@ public class GameSaveLoad : MonoBehaviour {
 			foreach(ISaveable s in saveables) {
 				s.LoadGame();
 			}
-			//CatManager.Instance.LoadGame();
-			//HouseItemManager.Instance.LoadGame();
 		}
 	}
 	
@@ -77,6 +75,30 @@ public class GameSaveLoad : MonoBehaviour {
 		}
 		
 		return null;
+	}
+
+	/*
+	 * Utility functions that write and read a string to/from a given file
+	 */
+	public void WriteToFile(string f, string content, bool encrypt = true) {
+		using(StreamWriter file = new StreamWriter(f)) {
+			if(encrypt) {
+				byte[] plainTextBytes = System.Text.Encoding.UTF8.GetBytes(content);
+				content = System.Convert.ToBase64String(plainTextBytes);
+			}
+			file.WriteLine(content);
+		}
+	}
+	public string ReadFromFile(string file, bool decrypt = true) {
+		string[] lines = System.IO.File.ReadAllLines(file);
+		string ret = lines[0];
+
+		if(decrypt) {
+			byte[] base64EncodedBytes = System.Convert.FromBase64String(ret);
+			ret = System.Text.Encoding.UTF8.GetString(base64EncodedBytes);
+		}
+
+		return ret;
 	}
 }
 

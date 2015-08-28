@@ -95,7 +95,7 @@ public class CatFactory : MonoBehaviour {
 		return CreateEmpty();
 	}
 	
-	public GameObject CreateFromFile(string filename) {
+	public CatExportImportData CreateFromFile(string filename) {
 		return CatExportImport.Instance.ImportCat(filename);
 	}
 }

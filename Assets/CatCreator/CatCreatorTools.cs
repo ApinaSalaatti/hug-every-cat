@@ -135,29 +135,29 @@ public class BucketTool : CatCreatorTool {
 			Point current = queue[0];
 			queue.RemoveAt(0);
 
-			if(creator.IsLegal(current.x, current.y))toFill.Add(current);
+			if(creator.IsLegal(current.x, current.y)) toFill.Add(current);
 
 			Point n = new Point(current.x+1, current.y);
 			//Debug.Log("IS DONE: " + n.x + "," + n.y + ": " + done[n.x, n.y]);
-			if(!done[n.x, n.y] && creator.SameColor(creator.GetColorAt(n.x, n.y), oldCol)) {
+			if(n.x < done.GetLength(0) && !done[n.x, n.y] && creator.SameColor(creator.GetColorAt(n.x, n.y), oldCol)) {
 				done[n.x, n.y] = true;
 				queue.Add(n);
 			}
 			n = new Point(current.x-1, current.y);
 			//Debug.Log("IS DONE: " + n.x + "," + n.y + ": " + done[n.x, n.y]);
-			if(!done[n.x, n.y] && creator.SameColor(creator.GetColorAt(n.x, n.y), oldCol)) {
+			if(n.x >= 0 && !done[n.x, n.y] && creator.SameColor(creator.GetColorAt(n.x, n.y), oldCol)) {
 				done[n.x, n.y] = true;
 				queue.Add(n);
 			}
 			n = new Point(current.x, current.y+1);
 			//Debug.Log("IS DONE: " + n.x + "," + n.y + ": " + done[n.x, n.y]);
-			if(!done[n.x, n.y] && creator.SameColor(creator.GetColorAt(n.x, n.y), oldCol)) {
+			if(n.y < done.GetLength(1) && !done[n.x, n.y] && creator.SameColor(creator.GetColorAt(n.x, n.y), oldCol)) {
 				done[n.x, n.y] = true;
 				queue.Add(n);
 			}
 			n = new Point(current.x, current.y-1);
 			//Debug.Log("IS DONE: " + n.x + "," + n.y + ": " + done[n.x, n.y]);
-			if(!done[n.x, n.y] && creator.SameColor(creator.GetColorAt(n.x, n.y), oldCol)) {
+			if(n.y >= 0 && !done[n.x, n.y] && creator.SameColor(creator.GetColorAt(n.x, n.y), oldCol)) {
 				done[n.x, n.y] = true;
 				queue.Add(n);
 			}

@@ -38,8 +38,8 @@ public class CatManager : MonoBehaviour, ISaveable {
 	}
 
 	public void StartNewGame() {
-		GameObject c = CatFactory.Instance.CreateFromFile("startingCat");
-		AddCat(c);
+		//GameObject c = CatFactory.Instance.CreateFromFile("startingCat");
+		//AddCat(c);
 	}
 	
 	public void SaveGame() {

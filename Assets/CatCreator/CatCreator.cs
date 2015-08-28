@@ -11,6 +11,18 @@ public class ColorTool {
 }
 
 public class CatCreator : MonoBehaviour {
+	[SerializeField]
+	private Texture2D catTexture;
+	[SerializeField]
+	private Texture2D catTextureLegalPixels;
+	[SerializeField]
+	private GameObject previewCat;
+
+	[SerializeField]
+	private GameObject mainCamera;
+	[SerializeField]
+	private GameObject photoCamera;
+
 	/*
      * Used for drawing tools
 	 */
@@ -85,9 +97,9 @@ public class CatCreator : MonoBehaviour {
 	
 	void Awake() {
 		stats = cat.GetComponent<CatStats>();
-		
+
 		// Set the medium as chosen at the beginning
-		SetCatBody(1);
+		//SetCatBody(1);
 		
 		ResetCat();
 	}
@@ -162,6 +174,9 @@ public class CatCreator : MonoBehaviour {
 	}
 	
 	public void ResetCat() {
+		emptyCat = Sprite.Create(catTexture, new Rect(0, 0, 32, 32), new Vector2(0.5f, 0.5f), 32);
+		legalPixels = Sprite.Create(catTextureLegalPixels, new Rect(0, 0, 32, 32), new Vector2(0.5f, 0.5f), 32);
+
 		CopySpriteData(emptyCat);
 		
 		toolQueue.Clear();
@@ -175,6 +190,10 @@ public class CatCreator : MonoBehaviour {
 		tex.Apply();
 		catSprite = Sprite.Create(tex, s.rect, new Vector2(0.5f, 0.5f), s.pixelsPerUnit, 1, SpriteMeshType.Tight);
 		cat.GetComponent<SpriteRenderer>().sprite = catSprite;
+
+		// Set the texture to the preview cat
+		Renderer r = previewCat.GetComponentInChildren<Renderer>();
+		r.sharedMaterial.mainTexture = cat.GetComponent<SpriteRenderer>().sprite.texture;
 	}
 	
 	public void ShowRandomizationTools() {
@@ -309,6 +328,12 @@ public class CatCreator : MonoBehaviour {
 	 */
 	public void TakePhoto() {
 		canvasObject.SetActive(false);
+		cat.SetActive(false);
+
+		mainCamera.SetActive(false);
+		photoCamera.SetActive(true);
+
+		previewCat.transform.rotation = Quaternion.Euler(352f, 27f, 0f);
 		Photography.Instance.listeners += PhotoDone;
 		Photography.Instance.TakePhoto();
 	}
@@ -316,6 +341,10 @@ public class CatCreator : MonoBehaviour {
 	private void PhotoDone() {
 		Photography.Instance.listeners -= PhotoDone;
 		canvasObject.SetActive(true);
+		cat.SetActive(true);
+
+		photoCamera.SetActive(false);
+		mainCamera.SetActive(true);
 	}
 
 	/*
@@ -324,7 +353,8 @@ public class CatCreator : MonoBehaviour {
 	 * =============================
 	 */
 	public void SaveCatData() {
-		currentFilename = CatExportImport.Instance.ExportCat(cat, currentFilename);
+		CatExportImportData data = new CatExportImportData(cat.GetComponent<SpriteRenderer>().sprite.texture, cat.GetComponent<CatStats>());
+		currentFilename = CatExportImport.Instance.ExportCat(data, currentFilename);
 		saveInfoText.Show("Save successful", 4f);
 	}
 	
@@ -335,7 +365,7 @@ public class CatCreator : MonoBehaviour {
 	public void LoadCatData() {
 		CatLoadDialog.Instance.catSelectedListeners += OnCatLoad;
 		CatLoadDialog.Instance.cancelListeners += OnLoadCancel;
-		CatLoadDialog.Instance.ShowDialog(Globals.CatFolder);
+		CatLoadDialog.Instance.ShowDialog();
 	}
 	
 	private void OnLoadCancel() {
@@ -343,29 +373,44 @@ public class CatCreator : MonoBehaviour {
 		CatLoadDialog.Instance.cancelListeners -= OnLoadCancel;
 	}
 	
-	private void OnCatLoad(string filename, GameObject c) {
+	private void OnCatLoad(string filename, CatExportImportData c) {
 		saveInfoText.Show("Load successful", 4f);
 
 		CatLoadDialog.Instance.catSelectedListeners -= OnCatLoad; // No need to listen anymore
 		CatLoadDialog.Instance.cancelListeners -= OnLoadCancel;
 		
 		currentFilename = filename;
-		catNameText.text = c.GetComponent<CatStats>().Name;
+		catNameText.text = c.name;
+		if(c.gender == Gender.FEMALE) {
+			femaleToggle.isOn = true;
+		}
+		else {
+			femaleToggle.isOn = false;
+		}
 		
-		BodyType bt = c.GetComponent<CatStats>().BodyType;
-		SetCatBody(bt);
+		//BodyType bt = c.GetComponent<CatStats>().BodyType;
+		//SetCatBody(bt);
 		
 		ResetCat();
-		
-		CopySpriteData(c.GetComponent<CatSpriteManager>().GetSprite());
+
+		Sprite s = Sprite.Create(c.texture, new Rect(0f, 0f, 32f, 32f), new Vector2(0.5f, 0.5f), 32);
+		CopySpriteData(s);
+
+		//Destroy(c);
 	}
-	
+
 	public void FinalizeCat() {
+		SaveCatData();
 		// Serialize the cat so it can be loaded at game start
-		CatExportImport.Instance.ExportCat(cat, "startingCat");
-		Application.LoadLevel(2);
+		CatExportImportData data = new CatExportImportData(cat.GetComponent<SpriteRenderer>().sprite.texture, cat.GetComponent<CatStats>());
+		CatExportImport.Instance.ExportCat(data, "startingCat");
+		Application.LoadLevel(4);
 		
 		//GameObject c = Instantiate(Globals.CatPrefab) as GameObject;
 		//c.GetComponent<CatSpriteManager>().SetSprite(cat.GetComponent<SpriteRenderer>().sprite);
+	}
+
+	public void BackToMenu() {
+		Application.LoadLevel(0);
 	}
 }

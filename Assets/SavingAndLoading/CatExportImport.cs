@@ -1,6 +1,23 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+public class CatExportImportData {
+	public Texture2D texture;
+	public string name;
+	public Gender gender;
+
+	public CatExportImportData(Texture2D tex, CatStats stats) {
+		texture = tex;
+		name = stats.Name;
+		gender = stats.Gender;
+	}
+	public CatExportImportData(Texture2D tex, string n, Gender g) {
+		texture = tex;
+		name = n;
+		gender = g;
+	}
+}
+
 public class CatExportImport : MonoBehaviour {
 	private static CatExportImport instance;
 	public static CatExportImport Instance {
@@ -9,6 +26,7 @@ public class CatExportImport : MonoBehaviour {
 
 	void Awake() {
 		instance = this;
+		catSaveFolder = Globals.CatFolder;
 	}
 
 	/*
@@ -18,7 +36,7 @@ public class CatExportImport : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		catSaveFolder = Globals.CatFolder;
+
 	}
 	
 	// Update is called once per frame
@@ -32,13 +50,18 @@ public class CatExportImport : MonoBehaviour {
 
 	private string CreateFilename(string catName) {
 		double unixTimestamp = (System.DateTime.UtcNow.Subtract(new System.DateTime(1970, 1, 1))).TotalSeconds;
-		return catName.Replace(" ", "") + ((long)unixTimestamp).ToString() + ".catFile";
+
+		char[] invalidChars = System.IO.Path.GetInvalidFileNameChars();
+		for(int i = 0; i < invalidChars.Length; i++) {
+			catName.Replace(invalidChars[i], '-');
+		}
+
+		return catName.Replace(" ", "") + ((long)unixTimestamp).ToString();
 	}
 
 	// Returns the filename where the cat was saved
-	public string ExportCat(GameObject cat, string fileName = "") {
-		Texture2D tex = cat.GetComponent<SpriteRenderer>().sprite.texture;
-		CatStats stats = cat.GetComponent<CatStats>();
+	public string ExportCat(CatExportImportData data, string fileName = "") {
+		Texture2D tex = data.texture;
 
 		int width = tex.width;
 		int height = tex.height;
@@ -59,47 +82,58 @@ public class CatExportImport : MonoBehaviour {
 		}
 
 		if(string.IsNullOrEmpty(fileName))
-			fileName = CreateFilename(stats.Name);
+			fileName = CreateFilename(data.name);
 
-		using (System.IO.StreamWriter file = new System.IO.StreamWriter(catSaveFolder + fileName)) {
-			string bt = "";
-			switch(stats.BodyType) {
-			case BodyType.SKINNY:
-				bt = "skinny";
-				break;
-			case BodyType.MEDIUM:
-				bt = "medium";
-				break;
-			case BodyType.FAT:
-				bt = "fat";
-				break;
+		/*
+		string bt = "";
+		switch(stats.BodyType) {
+		case BodyType.SKINNY:
+			bt = "skinny";
+			break;
+		case BodyType.MEDIUM:
+			bt = "medium";
+			break;
+		case BodyType.FAT:
+			bt = "fat";
+			break;
+		}
+		*/
+		
+		string gender = "";
+		switch(data.gender) {
+		case Gender.MALE:
+			gender = "m";
+			break;
+		case Gender.FEMALE:
+			gender = "f";
+			break;
+		default:
+			gender = "u";
+			break;
+		}
+		
+		JSONObject json = new JSONObject(JSONObject.Type.OBJECT);
+		json.AddField("name", data.name);
+		json.AddField("gender", gender);
+		//json.AddField("bodyType", bt);
+		//json.AddField("image", textureString);
+
+		GameSaveLoad.Instance.WriteToFile(catSaveFolder + fileName + ".catFile", json.Print());
+		//using(System.IO.StreamWriter file = new System.IO.StreamWriter(catSaveFolder + fileName + ".catFile")) {
+		//	file.WriteLine(json.Print());
+		//}
+
+		byte[] bytes = tex.EncodeToPNG();
+		using(System.IO.FileStream file = System.IO.File.Open(catSaveFolder + fileName + ".png", System.IO.FileMode.OpenOrCreate, System.IO.FileAccess.Write)) {
+			using(System.IO.BinaryWriter bw = new System.IO.BinaryWriter(file)) {
+				bw.Write(bytes);
 			}
-
-			string gender = "";
-			switch(stats.Gender) {
-			case Gender.MALE:
-				gender = "m";
-				break;
-			case Gender.FEMALE:
-				gender = "f";
-				break;
-			default:
-				gender = "u";
-				break;
-			}
-
-			JSONObject json = new JSONObject(JSONObject.Type.OBJECT);
-			json.AddField("name", stats.Name);
-			json.AddField("gender", gender);
-			json.AddField("bodyType", bt);
-			json.AddField("image", textureString);
-
-			file.WriteLine(json.Print());
 		}
 
 		return fileName;
 	}
 
+	/*
 	public BodyType GetBodyType(string bt) {
 		if(bt.Equals("skinny"))
 			return BodyType.SKINNY;
@@ -107,7 +141,7 @@ public class CatExportImport : MonoBehaviour {
 			return BodyType.FAT;
 		else
 			return BodyType.MEDIUM;
-	}
+	}*/
 
 	public Gender GetGender(string g) {
 		if(g.Equals("f"))
@@ -118,30 +152,41 @@ public class CatExportImport : MonoBehaviour {
 			return Gender.UNKNOWN;
 	}
 	
-	public GameObject ImportCat(string filename) {
-		GameObject cat = Instantiate(Globals.CatPrefab);
+	public CatExportImportData ImportCat(string filename) {
+		//GameObject cat = Instantiate(Globals.CatPrefab);
 
-		string[] lines = System.IO.File.ReadAllLines(catSaveFolder + filename);
+		//string[] lines = System.IO.File.ReadAllLines(catSaveFolder + filename + ".catFile");
+		string str = GameSaveLoad.Instance.ReadFromFile(catSaveFolder + filename + ".catFile");
 
-		JSONObject json = new JSONObject(lines[0]);
+		JSONObject json = new JSONObject(str);
 		string name = json.GetField("name").str;
-		string btString = json.GetField("bodyType").str;
+		//string btString = json.GetField("bodyType").str;
 		string genderString = json.GetField("gender").str;
-		string img = json.GetField("image").str;
+		//string img = json.GetField("image").str;
 
-		BodyType bt = GetBodyType(btString);
-		CatStats stats = cat.GetComponent<CatStats>();
-		stats.BodyType = bt;
+		//BodyType bt = GetBodyType(btString);
+		//CatStats stats = cat.GetComponent<CatStats>();
+		//CatStats stats = new CatStats();
+		//stats.BodyType = bt;
 
-		stats.Name = name;
-		cat.name = name; // Set the name of the gameobject so it's easier to find in the hierarchy...
+		//stats.Name = name;
+		//cat.name = name; // Set the name of the gameobject so it's easier to find in the hierarchy...
 
-		stats.Gender = GetGender(genderString);
+		//stats.Gender = GetGender(genderString);
 
-		Sprite s = CreateSprite(bt, img);
-		cat.GetComponent<CatSpriteManager>().SetSprite(s);
+		//Sprite s = CreateSprite(bt, img);
+		byte[] bytes = System.IO.File.ReadAllBytes(catSaveFolder + filename + ".png");
+		Texture2D tex = new Texture2D(1, 1, TextureFormat.RGBA32, false);
+		tex.filterMode = FilterMode.Point;
 
-		return cat;
+		tex.LoadImage(bytes);
+
+		//Sprite s = Sprite.Create(tex, new Rect(0, 0, 32, 32), new Vector2(0.5f, 0.5f), 32, 1, SpriteMeshType.Tight);
+
+		//cat.GetComponent<CatSpriteManager>().SetSprite(s);
+
+		return new CatExportImportData(tex, name, GetGender(genderString));
+		//return cat;
 	}
 
 	public Sprite CreateSprite(BodyType bt, string img) {
