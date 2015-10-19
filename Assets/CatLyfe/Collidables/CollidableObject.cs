@@ -30,10 +30,12 @@ public class CollidableObject : MonoBehaviour {
 	}
 
 	void OnTriggerEnter(Collider col) {
-		Debug.Log("COLLISION WITH " + col.gameObject.name);
+		//Debug.Log("COLLISION WITH " + col.gameObject.name);
 		if(col.gameObject.layer == playerLayer) {
 			gameObject.SendMessage("OnCollisionWithPlayer", col.gameObject);
 			HumanAlertness.Instance.HearNoise(noiseLevel);
 		}
 	}
+
+
 }

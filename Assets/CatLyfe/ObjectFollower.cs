@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-namespace CatLyfe {
 public class ObjectFollower : MonoBehaviour {
 		[SerializeField]
 		private GameObject objectToFollow;
@@ -15,7 +14,7 @@ public class ObjectFollower : MonoBehaviour {
 		
 		// Update is called once per frame
 		void Update () {
-			transform.position = objectToFollow.transform.position + offset;
+			transform.position = Vector3.Lerp(transform.position, objectToFollow.transform.position + offset, Time.deltaTime * 5f);
 		}
 	}
-}
+

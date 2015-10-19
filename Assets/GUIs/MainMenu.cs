@@ -26,11 +26,11 @@ public class MainMenu : MonoBehaviour {
 	}
 
 	public void OpenCatstagram() {
-		Application.LoadLevel(3);
+		Application.LoadLevel(4);
 	}
 
 	public void OpenCatCreator() {
-		Application.LoadLevel(1);
+		Application.LoadLevel(2);
 	}
 
 	public void ShowNoCatsDialog() {
@@ -64,12 +64,20 @@ public class MainMenu : MonoBehaviour {
 		CatLoadDialog.Instance.cancelListeners -= OnCatLoadCancel;
 
 		CatExportImport.Instance.ExportCat(cat, "startingCat");
-		Application.LoadLevel(4);
+
+		if(GameSaveLoad.Instance.SavePresent) {
+			// Game already played before, skip the intro
+			Application.LoadLevel(7);
+		}
+		else {
+			// Go to intro
+			Application.LoadLevel(6);
+		}
 	}
 
 	public void LoadGame() {
-		WorldInit.CreateInitFile(WorldInitMode.LOAD);
-		Application.LoadLevel(2);
+		//WorldInit.CreateInitFile(WorldInitMode.LOAD);
+		//Application.LoadLevel(2);
 	}
 
 	public void QuitGame() {

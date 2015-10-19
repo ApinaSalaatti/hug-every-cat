@@ -17,6 +17,8 @@ public class HumanAlertnessMeter : MonoBehaviour {
 	[SerializeField]
 	private Text descriptionText;
 
+	private Color[] alertnessColors;
+
 	[SerializeField]
 	private Image[] alertnessLevelIndicators;
 	private int indicatorsShown = 0;
@@ -25,6 +27,12 @@ public class HumanAlertnessMeter : MonoBehaviour {
 	void Start () {
 		alertnessBarRect = alertnessBar.GetComponent<RectTransform>();
 		maxHeight = alertnessBarRect.sizeDelta.y;
+
+		alertnessColors = new Color[alertnessLevelIndicators.Length];
+		for(int i = 0; i < alertnessColors.Length; i++) {
+			alertnessColors[i] = alertnessLevelIndicators[i].color;
+			alertnessLevelIndicators[i].color = Color.gray;
+		}
 
 		alertnessImage.sprite = alertnessSprites[0];
 		descriptionText.text = alertnessDescriptions[0];
@@ -43,15 +51,23 @@ public class HumanAlertnessMeter : MonoBehaviour {
 		else if(HumanAlertness.Instance.AlertnessLevel < indicatorsShown) {
 			// This SHOULD mean that a chase has ended
 			indicatorsShown--;
-			alertnessImage.sprite = alertnessSprites[indicatorsShown];
-			alertnessLevelIndicators[indicatorsShown].gameObject.SetActive(false);
-			descriptionText.text = alertnessDescriptions[indicatorsShown];
+			AlertnessChanged(indicatorsShown);
+			//alertnessImage.sprite = alertnessSprites[indicatorsShown];
+			//alertnessLevelIndicators[indicatorsShown].gameObject.SetActive(false);
+			//descriptionText.text = alertnessDescriptions[indicatorsShown];
 		}
 	}
 
 	private void AlertnessChanged(int alertness) {
 		alertnessImage.sprite = alertnessSprites[alertness];
-		alertnessLevelIndicators[alertness-1].gameObject.SetActive(true);
+		//alertnessLevelIndicators[alertness-1].gameObject.SetActive(true);
+
+		// Reset all DEFCON colors
+		for(int i = 0; i < alertnessLevelIndicators.Length; i++) {
+			alertnessLevelIndicators[i].color = Color.gray;
+		}
+		// Set color of correct DEFCON level
+		alertnessLevelIndicators[alertness-1].color = alertnessColors[alertness-1];
 		descriptionText.text = alertnessDescriptions[alertness];
 	}
 }

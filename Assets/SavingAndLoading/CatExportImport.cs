@@ -115,13 +115,8 @@ public class CatExportImport : MonoBehaviour {
 		JSONObject json = new JSONObject(JSONObject.Type.OBJECT);
 		json.AddField("name", data.name);
 		json.AddField("gender", gender);
-		//json.AddField("bodyType", bt);
-		//json.AddField("image", textureString);
 
 		GameSaveLoad.Instance.WriteToFile(catSaveFolder + fileName + ".catFile", json.Print());
-		//using(System.IO.StreamWriter file = new System.IO.StreamWriter(catSaveFolder + fileName + ".catFile")) {
-		//	file.WriteLine(json.Print());
-		//}
 
 		byte[] bytes = tex.EncodeToPNG();
 		using(System.IO.FileStream file = System.IO.File.Open(catSaveFolder + fileName + ".png", System.IO.FileMode.OpenOrCreate, System.IO.FileAccess.Write)) {
@@ -176,7 +171,7 @@ public class CatExportImport : MonoBehaviour {
 
 		//Sprite s = CreateSprite(bt, img);
 		byte[] bytes = System.IO.File.ReadAllBytes(catSaveFolder + filename + ".png");
-		Texture2D tex = new Texture2D(1, 1, TextureFormat.RGBA32, false);
+		Texture2D tex = new Texture2D(1, 1, TextureFormat.RGBA32, true);
 		tex.filterMode = FilterMode.Point;
 
 		tex.LoadImage(bytes);

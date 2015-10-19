@@ -3,6 +3,12 @@ using System.Collections;
 
 public class HumanAlertness : MonoBehaviour {
 	[SerializeField]
+	private GameObject handPrefab;
+
+	[SerializeField]
+	private GameObject player;
+
+	[SerializeField]
 	private FollowingHand hand;
 
 	private static HumanAlertness instance;
@@ -58,7 +64,27 @@ public class HumanAlertness : MonoBehaviour {
 		hand.EndChase();
 	}
 
+	private Room currentRoom;
+
+	public void SetCurrentRoom(Room r) {
+		currentRoom = r;
+	}
+
+	public void SpawnHand(Vector3 pos) {
+		GameObject h = Instantiate(handPrefab, pos, Quaternion.identity) as GameObject;
+		h.GetComponent<FollowingHand>().SetPlayer(player);
+		h.GetComponent<FollowingHand>().StartChase();
+	}
+
 	public void HearNoise(float noiseLevel) {
+		if(RoomManager.Instance.CurrentRoom != null) {
+			RoomManager.Instance.CurrentRoom.NoiseHeard(noiseLevel);
+		}
+		//if(currentRoom != null) {
+		//	currentRoom.NoiseHeard(noiseLevel);
+		//}
+
+		/*
 		if(!chasing) {
 			timeFromLastNoise = 0f;
 			currentAlertness += noiseLevel;
@@ -72,6 +98,6 @@ public class HumanAlertness : MonoBehaviour {
 					currentAlertness = 0f;
 				}
 			}
-		}
+		}*/
 	}
 }

@@ -11,6 +11,10 @@ public class ScoreEventDisplay : MonoBehaviour {
 	void Start () {
 		text = GetComponent<Text>();
 	}
+
+	public void SetPlayer(GameObject player) {
+		player.GetComponent<PlayerScore>().SetScoreDisplay(this);
+	}
 	
 	// Update is called once per frame
 	void Update () {

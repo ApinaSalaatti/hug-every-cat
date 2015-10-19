@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public enum FurRandomizationMethod { CELLULAR_AUTOMATA, PERLIN_NOISE }
+public enum FurRandomizationMethod { RANDOM_COLOR, CELLULAR_AUTOMATA, PERLIN_NOISE }
 
 public class RandomFur : MonoBehaviour {
 	public static Color Color1 { get; set; }

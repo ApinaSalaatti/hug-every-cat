@@ -90,7 +90,7 @@ public class CatstagramGUI : MonoBehaviour {
 	}
 
 	public void BackToMainMenu() {
-		Application.LoadLevel(0);
+		Application.LoadLevel(1);
 	}
 
 	private void OnError(WWW response) {

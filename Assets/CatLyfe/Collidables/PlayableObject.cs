@@ -15,6 +15,7 @@ public class PlayableObject : MonoBehaviour {
 
 	[SerializeField]
 	private float playTime = 1f;
+	public float PlayTime { get { return playTime; } }
 
 	// Use this for initialization
 	void Start () {
@@ -44,11 +45,11 @@ public class PlayableObject : MonoBehaviour {
 
 	private IEnumerator PlaySequence(GameObject player) {
 		if(animationToPlay != "") player.GetComponent<Animator>().SetBool(animationToPlay, true);
-		player.GetComponent<PlayerMover>().enabled = false;
+		player.GetComponent<PlayerMover>().Enable(false);
 
 		yield return new WaitForSeconds(playTime);
 		
-		player.GetComponent<PlayerMover>().enabled = true;
+		player.GetComponent<PlayerMover>().Enable (true);
 		if(animationToPlay != "") player.GetComponent<Animator>().SetBool(animationToPlay, false);
 	}
 }

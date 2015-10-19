@@ -52,9 +52,9 @@ public class GameSaveLoad : MonoBehaviour {
 			file.WriteLine(json.Print());
 		}
 
-		foreach(ISaveable s in saveables) {
-			s.SaveGame();
-		}
+		//foreach(ISaveable s in saveables) {
+		//	s.SaveGame();
+		//}
 		//CatManager.Instance.SaveGame();
 		//HouseItemManager.Instance.SaveGame();
 	}
@@ -78,11 +78,16 @@ public class GameSaveLoad : MonoBehaviour {
 	}
 
 	/*
-	 * Utility functions that write and read a string to/from a given file
+	 * File utility functions
 	 */
+	public bool FileExists(string f) {
+		return File.Exists(f);
+	}
+
 	public void WriteToFile(string f, string content, bool encrypt = true) {
 		using(StreamWriter file = new StreamWriter(f)) {
 			if(encrypt) {
+				Debug.Log("Encrypting data...");
 				byte[] plainTextBytes = System.Text.Encoding.UTF8.GetBytes(content);
 				content = System.Convert.ToBase64String(plainTextBytes);
 			}

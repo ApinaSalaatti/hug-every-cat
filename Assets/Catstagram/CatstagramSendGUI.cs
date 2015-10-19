@@ -2,7 +2,7 @@
 using UnityEngine.UI;
 using System.Collections;
 
-public class CatstagramSendGUI : MonoBehaviour {
+public class CatstagramSendGUI : MonoBehaviour, InputReceiver {
 	[SerializeField]
 	private GameObject gui;
 	[SerializeField]
@@ -36,11 +36,17 @@ public class CatstagramSendGUI : MonoBehaviour {
 	}
 
 	public void Open() {
+		GlobalInput.Instance.AddInputReceiver(this);
 		gui.SetActive(true);
 	}
 
 	public void Close() {
+		GlobalInput.Instance.RemoveInputReceiver(this);
 		gui.SetActive(false);
+	}
+
+	public bool ReceiveInput() {
+		return true;
 	}
 
 	public void SendImage() {

@@ -10,6 +10,8 @@ public class BreakingObject : MonoBehaviour {
 
 	private Animator animator;
 
+	private GameObject collidedPlayer;
+
 	// Use this for initialization
 	void Start () {
 		animator = GetComponent<Animator>();
@@ -22,6 +24,8 @@ public class BreakingObject : MonoBehaviour {
 
 	void OnCollisionWithPlayer(GameObject player) {
 		gameObject.layer = LayerMask.NameToLayer("Broken");
+
+		collidedPlayer = player;
 
 		CollidableObject col = GetComponent<CollidableObject>();
 		player.SendMessage("AddScore", new ScoreEvent(col.ScoreValue, ScoreType.BREAK, col.ScoreText, gameObject.transform.position));
@@ -36,7 +40,7 @@ public class BreakingObject : MonoBehaviour {
 	}
 
 	public void BreakAnimationDone() {
-		gameObject.SendMessage("OnBreak", SendMessageOptions.DontRequireReceiver);
+		gameObject.BroadcastMessage("OnBreak", collidedPlayer, SendMessageOptions.DontRequireReceiver);
 		if(destroyOnBreak)
 			Destroy(gameObject);
 	}

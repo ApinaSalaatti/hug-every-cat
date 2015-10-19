@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class FreelyMovingCamera : MonoBehaviour {
+public class FreelyMovingCamera : MonoBehaviour, InputReceiver {
 	[SerializeField]
 	private GameObject player;
 
@@ -20,7 +20,7 @@ public class FreelyMovingCamera : MonoBehaviour {
 	}
 	
 	// Update is called once per frame
-	void Update () {
+	public bool ReceiveInput() {
 		Vector3 movement = new Vector3(0f, 0f, 0f);
 		if(pointerDown) {
 			Vector2 currentMousePos = Input.mousePosition;
@@ -43,20 +43,28 @@ public class FreelyMovingCamera : MonoBehaviour {
 			}
 			lastMousePos = currentMousePos;
 		}
+		else if(Input.GetAxis("Mouse ScrollWheel") != 0f) {
+			movement.z = Input.GetAxis("Mouse ScrollWheel") * 5f;
+		}
+		else {
+			movement.x = Input.GetAxisRaw("Horizontal");
+			movement.z = Input.GetAxisRaw("Vertical");
+		}
 
-		movement.z = Input.GetAxis("Mouse ScrollWheel") * 5f;
 		movement = transform.TransformDirection(movement);
 
 		// Move camera
 		Vector3 cameraPos = transform.position;
 		cameraPos += movement;
-		if(cameraPos.y < 2f) {
-			cameraPos.y = 2f;
+		if(cameraPos.y < player.transform.position.y+1f) {
+			cameraPos.y = player.transform.position.y+1f;
 		}
 
 		if(Vector3.Distance(cameraPos, player.transform.position) < 30f) {
 			transform.position = cameraPos;
 		}
+
+		return true;
 	}
 
 	public void PointerDown() {
@@ -78,5 +86,12 @@ public class FreelyMovingCamera : MonoBehaviour {
 	public void PointerUp() {
 		Debug.Log("stop clickin");
 		pointerDown = false;
+	}
+
+	void OnEnable() {
+		GlobalInput.Instance.AddInputReceiver(this);
+	}
+	void OnDisable() {
+		GlobalInput.Instance.RemoveInputReceiver(this);
 	}
 }

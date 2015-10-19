@@ -25,13 +25,16 @@ public class ComboHandler : MonoBehaviour {
 	private int plays;
 	public int Plays { get { return plays; } }
 
+	private int saves;
+	public int Saves { get { return saves; } }
+
 	private bool eclectic;
 	public bool Eclectic { get { return eclectic; } }
 
 	public int TotalCombo {
 		get {
 			int e = eclectic ? 1 : 0;
-			return breaks + ignores + plays + e;
+			return breaks + ignores + plays + saves + e;
 		}
 	}
 
@@ -60,6 +63,7 @@ public class ComboHandler : MonoBehaviour {
 		breaks = 0;
 		ignores = 0;
 		plays = 0;
+		saves = 0;
 
 		eclectic = false;
 
@@ -80,10 +84,13 @@ public class ComboHandler : MonoBehaviour {
 		case ScoreType.PLAY:
 			plays++;
 			break;
+		case ScoreType.SAVE:
+			saves++;
+			break;
 		}
 
 		if(!eclectic) {
-			if(breaks > 0 && ignores > 0 && plays > 0) {
+			if(breaks > 0 && ignores > 0 && plays > 0 && saves > 0) {
 				// ECLECTIC CATTING!!
 				eclectic = true;
 				multiplier += 1;

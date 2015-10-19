@@ -15,7 +15,7 @@ using System.Collections.Generic;
 //- leiki pahvilaatikolla
 //- ignore/hukkaa kalliit lelut
 
-public enum ScoreType { BREAK, IGNORE, PLAY }
+public enum ScoreType { BREAK, IGNORE, PLAY, SAVE }
 
 public class ScoreEvent {
 	public int score;
@@ -40,6 +40,9 @@ public class PlayerScore : MonoBehaviour {
 
 	[SerializeField]
 	private ScoreEventDisplay scoreDisplay;
+	public void SetScoreDisplay(ScoreEventDisplay sed) {
+		scoreDisplay = sed;
+	}
 
 	private bool heightBonus = false;
 	private bool chaseBonus = false;

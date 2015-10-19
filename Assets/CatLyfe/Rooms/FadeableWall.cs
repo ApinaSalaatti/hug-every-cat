@@ -16,7 +16,17 @@ public class FadeableWall : MonoBehaviour {
 
 	public void FadeIn() {
 		CancelInvoke();
-		StartCoroutine(FadeColorIn());
+		if(Time.timeScale > 0f) {
+			StartCoroutine(FadeColorIn());
+		}
+		else {
+			// If paused, we want to change INSTANTLY!
+			Color c = mRenderer.material.color;
+			c.a = 1f;
+			for(int i = 0; i < mRenderer.materials.Length; i++) {
+				mRenderer.materials[i].color = c;
+			}
+		}
 	}
 	public void FadeOut() {
 		CancelInvoke();
@@ -26,7 +36,9 @@ public class FadeableWall : MonoBehaviour {
 	private IEnumerator FadeColorIn() {
 		Color c = mRenderer.material.color;
 		while(c.a < 1f) {
-			mRenderer.material.color = c;
+			for(int i = 0; i < mRenderer.materials.Length; i++) {
+				mRenderer.materials[i].color = c;
+			}
 			c.a += Time.deltaTime;
 			yield return null;
 		}
@@ -35,7 +47,9 @@ public class FadeableWall : MonoBehaviour {
 	private IEnumerator FadeColorOut() {
 		Color c = mRenderer.material.color;
 		while(c.a > 0.01f) {
-			mRenderer.material.color = c;
+			for(int i = 0; i < mRenderer.materials.Length; i++) {
+				mRenderer.materials[i].color = c;
+			}
 			c.a -= Time.deltaTime;
 			yield return null;
 		}

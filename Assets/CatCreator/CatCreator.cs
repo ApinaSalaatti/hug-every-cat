@@ -64,6 +64,8 @@ public class CatCreator : MonoBehaviour {
 	private InputField catNameText;
 	[SerializeField]
 	private Toggle femaleToggle;
+	[SerializeField]
+	private Toggle maleToggle;
 	
 	/*
 	 * GameObject and and cached components of the cat that's being edited
@@ -184,7 +186,7 @@ public class CatCreator : MonoBehaviour {
 		usingTool = false;
 	}
 	public void CopySpriteData(Sprite s) {
-		Texture2D tex = new Texture2D(s.texture.width, s.texture.height, s.texture.format, false);
+		Texture2D tex = new Texture2D(s.texture.width, s.texture.height, s.texture.format, true);
 		tex.filterMode = FilterMode.Point;
 		tex.SetPixels(s.texture.GetPixels());
 		tex.Apply();
@@ -383,9 +385,11 @@ public class CatCreator : MonoBehaviour {
 		catNameText.text = c.name;
 		if(c.gender == Gender.FEMALE) {
 			femaleToggle.isOn = true;
+			maleToggle.isOn = false;
 		}
 		else {
 			femaleToggle.isOn = false;
+			maleToggle.isOn = true;
 		}
 		
 		//BodyType bt = c.GetComponent<CatStats>().BodyType;
@@ -404,13 +408,18 @@ public class CatCreator : MonoBehaviour {
 		// Serialize the cat so it can be loaded at game start
 		CatExportImportData data = new CatExportImportData(cat.GetComponent<SpriteRenderer>().sprite.texture, cat.GetComponent<CatStats>());
 		CatExportImport.Instance.ExportCat(data, "startingCat");
-		Application.LoadLevel(4);
-		
-		//GameObject c = Instantiate(Globals.CatPrefab) as GameObject;
-		//c.GetComponent<CatSpriteManager>().SetSprite(cat.GetComponent<SpriteRenderer>().sprite);
+
+		if(GameSaveLoad.Instance.SavePresent) {
+			// Game already played before, skip the intro
+			Application.LoadLevel(7);
+		}
+		else {
+			// Go to intro
+			Application.LoadLevel(6);
+		}
 	}
 
 	public void BackToMenu() {
-		Application.LoadLevel(0);
+		Application.LoadLevel(1);
 	}
 }

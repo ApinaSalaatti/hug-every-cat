@@ -18,6 +18,11 @@ public class PlayerScoreDisplay : MonoBehaviour {
 		SetPlayerName(playerInfo.Name);
 	}
 
+	void SetPlayer(GameObject p) {
+		playerInfo = p.GetComponent<CatStats>();
+		player = p.GetComponent<PlayerScore>();
+	}
+
 	public void SetPlayerName(string name) {
 		nameText.text = name + "'s Score:";
 	}

@@ -4,7 +4,7 @@ using System.Collections;
 
 public class CatstagramImage : MonoBehaviour {
 	[SerializeField]
-	private CatstagramAPI catsragram;
+	private CatstagramAPI catstagram;
 
 	[SerializeField]
 	private Image catImage;
@@ -23,7 +23,6 @@ public class CatstagramImage : MonoBehaviour {
 
 	private string id;
 
-	private CatstagramAPI catstagram;
 	public void SetCatstagram(CatstagramAPI c) {
 		catstagram = c;
 	}
@@ -67,6 +66,7 @@ public class CatstagramImage : MonoBehaviour {
 		unlikeButton.SetActive(true);
 	}
 	public void Unlike() {
+		Debug.Log(catstagram);
 		catstagram.SendUnlike(id);
 		int likes = int.Parse(likeCount.text);
 		likes--;

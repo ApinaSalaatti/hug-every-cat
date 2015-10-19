@@ -16,6 +16,10 @@ public class PlayerComboDisplay : MonoBehaviour {
 	void Start () {
 	
 	}
+
+	void SetPlayer(GameObject player) {
+		score = player.GetComponent<PlayerScore>();
+	}
 	
 	// Update is called once per frame
 	void Update () {
@@ -32,6 +36,9 @@ public class PlayerComboDisplay : MonoBehaviour {
 			}
 			if(score.Combos.Plays > 0) {
 				comboText.text += "- Played With Non-Toy x" + score.Combos.Plays + "\n";
+			}
+			if(score.Combos.Saves > 0) {
+				comboText.text += "- Friend Saved x" + score.Combos.Saves + "\n";
 			}
 			if(score.Combos.Eclectic) {
 				comboText.text += "- Eclectic catting!" + "\n";

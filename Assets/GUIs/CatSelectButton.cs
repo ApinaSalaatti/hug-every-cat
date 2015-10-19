@@ -11,6 +11,12 @@ public class CatSelectButton : MonoBehaviour {
 	public void SetCat(CatExportImportData cat) {
 		Sprite s = Sprite.Create(cat.texture, new Rect(0f, 0f, 32f, 32f), new Vector2(0.5f, 0.5f), 32);
 		image.sprite = s;
-		text.text = cat.name;
+		if(cat.name != null && cat.name != "") {
+			text.text = cat.name;
+		}
+		else {
+			cat.name = "Unnamed";
+			text.text = "Unnamed";
+		}
 	}
 }

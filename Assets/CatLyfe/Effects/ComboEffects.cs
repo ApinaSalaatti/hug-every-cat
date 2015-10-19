@@ -28,6 +28,8 @@ public class ComboEffects : MonoBehaviour {
 	}
 
 	private void ResetEffects() {
+		WorldBackground.Instance.StopColors();
+
 		effectsStarted = false;
 		firstEffect.GetComponent<ParticleSystem>().Stop();
 		secondEffect.GetComponent<ParticleSystem>().Stop();
@@ -45,6 +47,8 @@ public class ComboEffects : MonoBehaviour {
 		effectsStarted = true;
 		Debug.Log("WHOO 10!!");
 		firstEffect.GetComponent<ParticleSystem>().Play();
+
+		WorldBackground.Instance.StartColors();
 
 		while(combos.TotalCombo < 20) {
 			yield return null;
